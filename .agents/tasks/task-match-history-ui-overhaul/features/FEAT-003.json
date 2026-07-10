@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "fix",
   "description": "Address review findings: fix theme hydration flash with blocking script, add error state to Load More button, prevent re-animation on appended cards, fix sticky header overlapping content, and add clarifying comment for region-to-platform mapping.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Fix theme hydration flash in app/layout.tsx by adding a blocking inline script that reads localStorage and sets the dark class before first paint.",
     "2. Add transient error state to Load More in app/components/Dashboard.tsx so users see feedback when a fetch fails.",
@@ -24,5 +24,5 @@
     "cd /projects/sandbox/kiro-web-league-tracker && eval \"$(mise activate bash)\" && npm run build"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 5 review issues addressed. React 19 ESLint rule (react-hooks/refs) prevents reading refs during render, so animation tracking uses useState instead of useRef for the animateFromIndex value. The blocking script approach for theme hydration works without needing next-themes since it runs before React hydrates. Build and lint pass with zero errors."
 }
