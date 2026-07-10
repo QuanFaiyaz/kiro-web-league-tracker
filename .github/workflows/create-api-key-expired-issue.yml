@@ -1,0 +1,61 @@
+name: Create API Key Expired Issue
+
+on:
+  push:
+    branches:
+      - chore/api-key-expired-alert
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'urgent'
+            });
+
+            const existingIssue = issues.data.find(
+              issue => issue.title === 'Alert: Riot API key expired' && !issue.pull_request
+            );
+
+            if (existingIssue) {
+              console.log(`Issue already exists: #${existingIssue.number}`);
+              return;
+            }
+
+            // Ensure the "urgent" label exists
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'urgent'
+              });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: 'urgent',
+                  color: 'e11d48',
+                  description: 'Urgent priority issue'
+                });
+              }
+            }
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Alert: Riot API key expired',
+              body: `## Action Required (Manual Steps)\n\n1. Log in at https://developer.riotgames.com/ and regenerate your API key\n2. Copy the new key and update .env.local: RIOT_API_KEY=RGAPI-your-new-key\n3. Restart the dev server (npm run dev) or redeploy to production\n\n**Note:** The app is currently showing "Service temporarily unavailable" to users until this is resolved.`,
+              labels: ['urgent']
+            });
+
+            console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
