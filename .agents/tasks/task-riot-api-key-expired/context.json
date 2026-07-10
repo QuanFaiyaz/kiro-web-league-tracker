@@ -1,20 +1,20 @@
 {
-  "project_type": "Next.js 16 app with TypeScript and Tailwind CSS, App Router architecture",
+  "project_type": "Next.js 16 app with TypeScript, Tailwind CSS, App Router",
   "language": "TypeScript",
-  "build_system": "npm with Next.js 16",
+  "build_system": "npm scripts with Next.js (using bun as runtime since npm/node not available directly)",
   "test_framework": "No test framework configured",
-  "build_command": "npm run build",
-  "test_command": null,
-  "verification_instructions": "Run npm run build to verify the change compiles successfully",
+  "build_command": "bun run build",
+  "test_command": "bun run lint",
+  "verification_instructions": "1. Run bun run lint - zero errors expected. 2. Run bun run build - must compile successfully.",
   "snapshot_or_generated_files": null,
-  "setup_instructions": "npm install",
-  "environment_constraints": "OPEN_INTERNET - full network access available. Riot API key is expired/invalid (returns 401).",
-  "contribution_requirements": "TypeScript must pass, ESLint must pass, build must succeed. No test suite configured.",
-  "key_patterns": "API route in app/api/riot/route.ts uses RiotApiError class from lib/riot-api.ts. Error handling uses switch on status codes in riotFetch. The route returns ApiErrorResponse type objects on errors.",
+  "setup_instructions": "1. bun install 2. bun run build",
+  "environment_constraints": "Node.js not directly available - use bun as runtime. RIOT_API_KEY not set in environment. OPEN_INTERNET network mode.",
+  "contribution_requirements": "TypeScript passes, ESLint passes, build succeeds, no unused imports, responsive Tailwind CSS, semantic HTML.",
+  "key_patterns": "API route at app/api/riot/route.ts proxies Riot API calls. Riot API client in lib/riot-api.ts uses RiotApiError class with status codes. 401/403 errors are already caught and returned as 503 with user-friendly message.",
   "relevant_files": [
     "app/api/riot/route.ts",
     "lib/riot-api.ts",
     "lib/types.ts"
   ],
-  "directory_structure": "app/ - Next.js app router pages and API routes; lib/ - shared utilities, types, API helpers; public/ - static assets"
+  "directory_structure": "app/ - Next.js App Router pages and API routes. lib/ - shared utilities (riot-api.ts, types.ts). public/ - static assets."
 }
