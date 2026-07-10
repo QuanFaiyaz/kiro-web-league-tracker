@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add a region selector dropdown so users can choose which Riot API regional routing value to use for match history lookups. This involves changes across the full stack: a new RegionSelector component, updated Dashboard state management, API route parameter handling, and riot-api.ts regional URL routing.",
+  "status": "pending",
+  "steps": [
+    "Define a Region type in lib/types.ts with values: 'americas', 'europe', 'asia', 'sea' and a display-name mapping (Americas, Europe, Asia, South East Asia). Include the corresponding base URLs.",
+    "Update lib/riot-api.ts: (a) Add a helper function or map that resolves a region key to its API base URL (americas.api.riotgames.com, europe.api.riotgames.com, asia.api.riotgames.com, sea.api.riotgames.com). (b) Add a `region` parameter to `getMatchIdsByPuuid` and `getMatchDetails` functions so they use the region-specific base URL instead of the hardcoded RIOT_API_BASE. (c) Keep `getAccountByRiotId` using the americas base URL since account lookups are global.",
+    "Update app/api/riot/route.ts to: (a) Accept a `region` query parameter from the request URL. (b) Validate that the region value is one of the allowed values ('americas', 'europe', 'asia', 'sea'), defaulting to 'americas' if missing or invalid. (c) Pass the validated region to `getMatchIdsByPuuid` and `getMatchDetails` calls. (d) Remove or update the warning message about regional routing limitations since users can now select their region.",
+    "Create a new component app/components/RegionSelector.tsx: (a) A labeled dropdown/select element with responsive Tailwind CSS styling matching the existing dark theme. (b) Options for each region with user-friendly display names. (c) Props: `selectedRegion`, `onChange` callback, and `disabled` (for when loading). (d) Use semantic HTML with a proper <label> element.",
+    "Update app/components/Dashboard.tsx: (a) Add region state (default: 'americas'). (b) Render the RegionSelector component alongside or below the SearchForm. (c) Update handleSearch to include the region parameter in the API fetch URL as a query parameter. (d) Update the handleSearch signature or use the region state directly when constructing the API URL."
+  ],
+  "acceptance_criteria": [
+    "A region dropdown is rendered on the page with 4 options: Americas, Europe, Asia, South East Asia",
+    "Selecting a region changes which Riot API regional endpoint is used for match history",
+    "The account lookup still works globally regardless of selected region",
+    "The API route validates the region parameter and defaults to 'americas' for invalid values",
+    "The component uses responsive Tailwind CSS classes and semantic HTML",
+    "`npm run build` passes with no TypeScript errors",
+    "`npm run lint` passes with no errors"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit code 0",
+    "Run `npm run lint` and confirm no errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
