@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Add champion performance stats, role distribution chart, and performance trends chart using recharts",
-  "status": "pending",
+  "status": "completed",
   "steps": [
     "Install recharts: run 'bun add recharts' in /projects/sandbox/kiro-web-league-tracker. Recharts is a lightweight React charting library that works well with React 19.",
     "Create app/components/ChampionStats.tsx: Aggregate match data to show per-champion stats. For each unique champion in the matches array, compute: games played, win rate (%), average KDA, average CS/min. Display as a responsive table/card grid sorted by games played. Include the champion icon using next/image. Show at least the top 5-8 most played champions.",
@@ -27,5 +27,5 @@
     "Run 'bunx next build' and confirm successful build with no TypeScript or compilation errors"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Recharts 3.9.2 installed successfully. PieLabelRenderProps does not include custom data fields (like 'percentage') - use payload cast instead. Tooltip formatter should not explicitly type params to avoid ValueType incompatibility. worker_threads warnings from Bun are cosmetic and do not affect the build."
 }
