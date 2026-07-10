@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { MatchSummary } from "@/lib/types";
 import MatchCard from "./MatchCard";
 import MatchDetailModal from "./MatchDetailModal";
@@ -13,6 +13,19 @@ interface MatchHistoryProps {
 
 export default function MatchHistory({ matches }: MatchHistoryProps) {
   const [selectedMatch, setSelectedMatch] = useState<MatchSummary | null>(null);
+  const [animateFromIndex, setAnimateFromIndex] = useState(0);
+  const prevMatchCountRef = useRef(0);
+
+  useEffect(() => {
+    if (matches.length > prevMatchCountRef.current && prevMatchCountRef.current > 0) {
+      // New matches were appended; only animate from the new batch start
+      setAnimateFromIndex(prevMatchCountRef.current);
+    } else if (matches.length < prevMatchCountRef.current || prevMatchCountRef.current === 0) {
+      // Fresh load or reset; animate all cards
+      setAnimateFromIndex(0);
+    }
+    prevMatchCountRef.current = matches.length;
+  }, [matches.length]);
 
   const handleMatchClick = useCallback((match: MatchSummary) => {
     setSelectedMatch(match);
@@ -49,19 +62,23 @@ export default function MatchHistory({ matches }: MatchHistoryProps) {
       </div>
 
       <div className="flex flex-col gap-3">
-        {matches.map((match, index) => (
-          <div
-            key={match.matchId}
-            className="animate-[fadeSlideUp_0.4s_ease-out_both]"
-            style={{ animationDelay: `${index * 75}ms` }}
-          >
-            <MatchCard
-              match={match}
-              matchIndex={index}
-              onClick={() => handleMatchClick(match)}
-            />
-          </div>
-        ))}
+        {matches.map((match, index) => {
+          const shouldAnimate = index >= animateFromIndex;
+          const delayIndex = index - animateFromIndex;
+          return (
+            <div
+              key={match.matchId}
+              className={shouldAnimate ? "animate-[fadeSlideUp_0.4s_ease-out_both]" : undefined}
+              style={shouldAnimate ? { animationDelay: `${delayIndex * 75}ms` } : undefined}
+            >
+              <MatchCard
+                match={match}
+                matchIndex={index}
+                onClick={() => handleMatchClick(match)}
+              />
+            </div>
+          );
+        })}
       </div>
       {selectedMatch && (
         <MatchDetailModal

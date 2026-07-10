@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [rankedData, setRankedData] = useState<RankedEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState(false);
   const [error, setError] = useState<{ message: string; status?: number } | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [region, setRegion] = useState<Region>("americas");
@@ -64,6 +65,7 @@ export default function Dashboard() {
     if (!lastSearchRef.current || isLoadingMore) return;
 
     setIsLoadingMore(true);
+    setLoadMoreError(false);
 
     try {
       const { gameName, tagLine } = lastSearchRef.current;
@@ -76,6 +78,7 @@ export default function Dashboard() {
       const response = await fetch(`/api/riot?${params.toString()}`);
 
       if (!response.ok) {
+        setLoadMoreError(true);
         return;
       }
 
@@ -89,7 +92,7 @@ export default function Dashboard() {
         setHasMore(false);
       }
     } catch {
-      // Silently fail - user can retry
+      setLoadMoreError(true);
     } finally {
       setIsLoadingMore(false);
     }
@@ -102,7 +105,7 @@ export default function Dashboard() {
   }, [region, handleSearch]);
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-8">
+    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-8 scroll-pt-28">
       <div className="sticky top-0 z-10 -mx-4 flex flex-col gap-4 bg-white/80 px-4 py-4 backdrop-blur-md dark:bg-gray-950/80">
         <section aria-label="Summoner search">
           <SearchForm onSearch={handleSearch} isLoading={isLoading} />
@@ -113,48 +116,59 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {isLoading && <LoadingSpinner />}
+      <div className="pt-2">
+        {isLoading && <LoadingSpinner />}
 
-      {error && <ErrorDisplay message={error.message} status={error.status} />}
+        {error && <ErrorDisplay message={error.message} status={error.status} />}
 
-      {warning && !isLoading && !error && (
-        <aside aria-label="Warning" className="rounded-lg border border-yellow-500/50 bg-yellow-50/50 px-4 py-3 text-sm text-yellow-700 dark:border-yellow-600/50 dark:bg-yellow-900/20 dark:text-yellow-300">
-          {warning}
-        </aside>
-      )}
+        {warning && !isLoading && !error && (
+          <aside aria-label="Warning" className="rounded-lg border border-yellow-500/50 bg-yellow-50/50 px-4 py-3 text-sm text-yellow-700 dark:border-yellow-600/50 dark:bg-yellow-900/20 dark:text-yellow-300">
+            {warning}
+          </aside>
+        )}
 
-      {account && !isLoading && !error && (
-        <section aria-label="Summoner info" className="flex flex-col items-center gap-2 text-center">
-          <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
-            {account.gameName}
-            <span className="text-gray-400 dark:text-gray-500">#{account.tagLine}</span>
-          </p>
-          {rankedData.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-2">
-              {rankedData.map((entry) => (
-                <RankBadge key={entry.queueType} rankedEntry={entry} />
-              ))}
-            </div>
-          )}
-        </section>
-      )}
+        {account && !isLoading && !error && (
+          <section aria-label="Summoner info" className="flex flex-col items-center gap-2 text-center">
+            <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
+              {account.gameName}
+              <span className="text-gray-400 dark:text-gray-500">#{account.tagLine}</span>
+            </p>
+            {rankedData.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2">
+                {rankedData.map((entry) => (
+                  <RankBadge key={entry.queueType} rankedEntry={entry} />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
-      {account && !isLoading && !error && (
-        <MatchHistory matches={matches} />
-      )}
+        {account && !isLoading && !error && (
+          <MatchHistory matches={matches} />
+        )}
 
-      {account && !isLoading && !error && matches.length > 0 && hasMore && (
-        <div className="flex justify-center pb-8">
-          <button
-            type="button"
-            onClick={handleLoadMore}
-            disabled={isLoadingMore}
-            className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-          >
-            {isLoadingMore ? "Loading..." : "Load More"}
-          </button>
-        </div>
-      )}
+        {account && !isLoading && !error && matches.length > 0 && hasMore && (
+          <div className="flex flex-col items-center gap-2 pb-8">
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              className={`rounded-lg border px-6 py-2.5 text-sm font-medium shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                loadMoreError
+                  ? "border-red-300 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-600 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
+                  : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              {isLoadingMore ? "Loading..." : loadMoreError ? "Failed to load. Retry?" : "Load More"}
+            </button>
+            {loadMoreError && (
+              <p className="text-xs text-red-600 dark:text-red-400">
+                Something went wrong. Please try again.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
