@@ -12,10 +12,12 @@ export default function Dashboard() {
   const [account, setAccount] = useState<RiotAccount | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<{ message: string; status?: number } | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   const handleSearch = async (gameName: string, tagLine: string) => {
     setIsLoading(true);
     setError(null);
+    setWarning(null);
     setMatches([]);
     setAccount(null);
 
@@ -32,6 +34,9 @@ export default function Dashboard() {
       const data: ApiSuccessResponse = await response.json();
       setMatches(data.matches);
       setAccount(data.account);
+      if (data.warning) {
+        setWarning(data.warning);
+      }
     } catch {
       setError({ message: "Failed to connect to the server. Please check your connection and try again." });
     } finally {
@@ -48,6 +53,12 @@ export default function Dashboard() {
       {isLoading && <LoadingSpinner />}
 
       {error && <ErrorDisplay message={error.message} status={error.status} />}
+
+      {warning && !isLoading && !error && (
+        <aside aria-label="Warning" className="rounded-lg border border-yellow-600/50 bg-yellow-900/20 px-4 py-3 text-sm text-yellow-300">
+          {warning}
+        </aside>
+      )}
 
       {account && !isLoading && !error && (
         <section aria-label="Summoner info" className="text-center">

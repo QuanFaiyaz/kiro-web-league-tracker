@@ -68,4 +68,5 @@ export interface ApiErrorResponse {
 export interface ApiSuccessResponse {
   matches: MatchSummary[];
   account: RiotAccount;
+  warning?: string;
 }

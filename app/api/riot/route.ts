@@ -29,16 +29,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Validate gameName length (1-16 characters per Riot API docs)
-  if (gameName.length < 1 || gameName.length > 16) {
+  // Validate gameName length (max 16 characters per Riot API docs)
+  // Note: lower bound (empty string) is already handled by the !gameName guard above
+  if (gameName.length > 16) {
     return Response.json(
       { error: "gameName must be between 1 and 16 characters", status: 400 } satisfies ApiErrorResponse,
       { status: 400 }
     );
   }
 
-  // Validate tagLine length (1-5 characters per Riot API docs)
-  if (tagLine.length < 1 || tagLine.length > 5) {
+  // Validate tagLine length (max 5 characters per Riot API docs)
+  // Note: lower bound (empty string) is already handled by the !tagLine guard above
+  if (tagLine.length > 5) {
     return Response.json(
       { error: "tagLine must be between 1 and 5 characters", status: 400 } satisfies ApiErrorResponse,
       { status: 400 }
@@ -113,6 +115,14 @@ export async function GET(request: NextRequest) {
         tagLine: account.tagLine,
       },
     };
+
+    // If account was found but no match IDs were returned, warn that regional
+    // routing may be the cause (match history endpoint only returns results for
+    // the configured region, currently Americas).
+    if (matchIds.length === 0) {
+      responseBody.warning =
+        "No match history found. If this player is on a non-Americas server (EU, Asia, etc.), their matches may not be available due to regional routing limitations.";
+    }
 
     return Response.json(responseBody);
   } catch (error) {
