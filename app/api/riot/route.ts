@@ -6,7 +6,8 @@ import {
   getLatestDdragonVersion,
   RiotApiError,
 } from "@/lib/riot-api";
-import type { MatchSummary, ApiSuccessResponse, ApiErrorResponse, Region } from "@/lib/types";
+import { getQueueTypeLabel } from "@/lib/queue-labels";
+import type { MatchSummary, MatchItem, ApiSuccessResponse, ApiErrorResponse, Region } from "@/lib/types";
 import { REGION_BASE_URLS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -102,6 +103,27 @@ export async function GET(request: NextRequest) {
         const kda = deaths === 0 ? "Perfect" : ((kills + assists) / deaths).toFixed(2);
         const championName = participant?.championName ?? "Unknown";
 
+        // Build items array, filtering out empty slots (id === 0)
+        const itemIds = [
+          participant?.item0 ?? 0,
+          participant?.item1 ?? 0,
+          participant?.item2 ?? 0,
+          participant?.item3 ?? 0,
+          participant?.item4 ?? 0,
+          participant?.item5 ?? 0,
+          participant?.item6 ?? 0,
+        ];
+
+        const items: MatchItem[] = itemIds
+          .filter((id) => id !== 0)
+          .map((id) => ({
+            id,
+            iconUrl: `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/item/${id}.png`,
+          }));
+
+        const queueId = match.info.queueId ?? 0;
+        const queueType = getQueueTypeLabel(queueId, match.info.gameMode);
+
         return {
           matchId: match.metadata.matchId,
           champion: championName,
@@ -112,7 +134,10 @@ export async function GET(request: NextRequest) {
           kda,
           win: participant?.win ?? false,
           gameDuration: match.info.gameDuration,
-          gameMode: match.info.gameMode,
+          gameMode: queueType,
+          queueId,
+          queueType,
+          items,
         };
       });
 

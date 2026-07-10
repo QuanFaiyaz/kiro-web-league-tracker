@@ -33,6 +33,11 @@ export interface RiotAccount {
   tagLine: string;
 }
 
+export interface MatchItem {
+  id: number;
+  iconUrl: string;
+}
+
 export interface MatchSummary {
   matchId: string;
   champion: string;
@@ -44,6 +49,9 @@ export interface MatchSummary {
   win: boolean;
   gameDuration: number;
   gameMode: string;
+  queueId: number;
+  queueType: string;
+  items: MatchItem[];
 }
 
 // --- Riot API response shapes ---
@@ -63,11 +71,19 @@ export interface RiotMatchParticipant {
   deaths: number;
   assists: number;
   win: boolean;
+  item0: number;
+  item1: number;
+  item2: number;
+  item3: number;
+  item4: number;
+  item5: number;
+  item6: number;
 }
 
 export interface RiotMatchInfo {
   gameDuration: number;
   gameMode: string;
+  queueId: number;
   participants: RiotMatchParticipant[];
 }
 
