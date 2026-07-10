@@ -1,20 +1,20 @@
 {
-  "project_type": "Next.js 16 app with TypeScript and Tailwind CSS, App Router architecture",
+  "project_type": "Next.js 16 app with App Router (TypeScript)",
   "language": "TypeScript",
-  "build_system": "npm with Next.js 16",
-  "test_framework": "No test framework configured",
-  "build_command": "npm run build",
-  "test_command": null,
-  "verification_instructions": "Run npm run build to verify the change compiles successfully",
+  "build_system": "bun (bun.lock present), next build via bun run build",
+  "test_framework": "No test framework configured in package.json",
+  "build_command": "cd /projects/sandbox/kiro-web-league-tracker && bun run build",
+  "test_command": "No test script defined",
+  "verification_instructions": "Run bun run build and verify it completes without errors. Run bun run lint for linting.",
   "snapshot_or_generated_files": null,
-  "setup_instructions": "npm install",
-  "environment_constraints": "OPEN_INTERNET - full network access available. Riot API key is expired/invalid (returns 401).",
-  "contribution_requirements": "TypeScript must pass, ESLint must pass, build must succeed. No test suite configured.",
-  "key_patterns": "API route in app/api/riot/route.ts uses RiotApiError class from lib/riot-api.ts. Error handling uses switch on status codes in riotFetch. The route returns ApiErrorResponse type objects on errors.",
+  "setup_instructions": "cd /projects/sandbox/kiro-web-league-tracker && bun install",
+  "environment_constraints": "OPEN_INTERNET network mode. No npm available, use bun. No gh CLI authenticated. GitHub write operations only via kiro power tools (push_to_remote, create_pull_request). No create_issue tool available in the GitHub power.",
+  "contribution_requirements": "Use bun run build and bun run lint for verification. PR title under 70 chars.",
+  "key_patterns": "API route at app/api/riot/route.ts handles RiotApiError with status codes. lib/riot-api.ts has riotFetch that throws RiotApiError(500) for missing key, RiotApiError(403) for invalid/expired key. Route returns 503 with user-friendly message for 401/403.",
   "relevant_files": [
     "app/api/riot/route.ts",
     "lib/riot-api.ts",
-    "lib/types.ts"
+    ".env.example"
   ],
-  "directory_structure": "app/ - Next.js app router pages and API routes; lib/ - shared utilities, types, API helpers; public/ - static assets"
+  "directory_structure": "app/ - Next.js app router pages and API routes; lib/ - shared utilities and Riot API client; public/ - static assets"
 }

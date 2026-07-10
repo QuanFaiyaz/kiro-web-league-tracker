@@ -1,23 +1,25 @@
 {
   "id": "FEAT-001",
-  "type": "fix",
-  "description": "Update the API route error handling for expired/invalid API key (403 status) to return a user-friendly 'Service temporarily unavailable' message instead of exposing the internal error. Also handle 401 status the same way since the Riot API may return either for an expired key.",
+  "type": "chore",
+  "description": "Create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' containing the manual action steps for the developer. The API test confirmed a 401 response (key is expired/not set). The code in app/api/riot/route.ts already handles 401/403 gracefully by returning 503 with 'Service temporarily unavailable, please try again later'. No code changes are needed. The only action required is creating the GitHub issue. PR #19 exists as a PR but NOT as a standalone issue. Use the GitHub API via curl to create the issue, or document the limitation if write access is not available.",
   "status": "completed",
   "steps": [
-    "In app/api/riot/route.ts, update the catch block that handles RiotApiError. When the error status is 401 or 403, return a response with message 'Service temporarily unavailable, please try again later' and HTTP status 503 instead of the current behavior of returning the raw error message and status.",
-    "Ensure the ApiErrorResponse type is used for the response body, maintaining consistency with the existing pattern.",
-    "Run npm run lint to ensure no lint errors.",
-    "Run npm run build to verify the change compiles successfully."
+    "Attempt to create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' on QuanFaiyaz/kiro-web-league-tracker using the available GitHub power tools or any API method",
+    "The issue body must contain exactly: ## Action Required (Manual Steps)\\n\\n1. Log in at https://developer.riotgames.com/ and regenerate your API key\\n2. Copy the new key and update .env.local: RIOT_API_KEY=RGAPI-your-new-key\\n3. Restart the dev server (npm run dev) or redeploy to production\\n\\n**Note:** The app is currently showing 'Service temporarily unavailable' to users until this is resolved.",
+    "If issue creation is not possible due to tool limitations, document this clearly in the feature findings field",
+    "Verify the build still passes with bun run build",
+    "Verify linting passes with bun run lint"
   ],
   "acceptance_criteria": [
-    "When the API route encounters a 401 or 403 error from Riot API, it returns HTTP 503 with body {error: 'Service temporarily unavailable, please try again later', status: 503}",
-    "npm run build passes with zero errors",
-    "npm run lint passes with zero errors"
+    "A GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' exists, OR the limitation is clearly documented",
+    "bun run build passes",
+    "bun run lint passes",
+    "No code changes are needed since app/api/riot/route.ts already handles 401/403"
   ],
   "verification": [
-    "npm run lint",
-    "npm run build"
+    "Run: cd /projects/sandbox/kiro-web-league-tracker && bun run build",
+    "Run: cd /projects/sandbox/kiro-web-league-tracker && bun run lint"
   ],
   "blocked_reason": null,
-  "findings": "Node.js was not pre-installed; used mise to install node@22. npm run lint and npm run build both pass. mise.toml was created in project root but not committed as part of the feature commit to keep it focused."
+  "findings": "GitHub issue creation was NOT possible due to tool limitations. The available kiro GitHub power tools do not include a create_issue tool. The gh CLI is installed but NOT authenticated. Direct GitHub API calls via curl return 401 (no token available in the environment). The gateway URL (us-east-1.gateway.connections.autonomous-agents.kiro.dev) only supports git operations, not the GitHub REST API for issues. Verified: bun run build passes successfully, bun run lint passes with zero errors. No code changes were needed since app/api/riot/route.ts already handles 401/403 gracefully by returning HTTP 503 with 'Service temporarily unavailable, please try again later'. The user must manually create the GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' on QuanFaiyaz/kiro-web-league-tracker."
 }
