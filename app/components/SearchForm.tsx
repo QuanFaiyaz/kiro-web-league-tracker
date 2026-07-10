@@ -21,10 +21,17 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
       return;
     }
 
-    const [gameName, tagLine] = trimmed.split("#");
+    const hashIndex = trimmed.indexOf("#");
+    const gameName = trimmed.slice(0, hashIndex);
+    const tagLine = trimmed.slice(hashIndex + 1);
 
     if (!gameName || !tagLine) {
       setValidationError("Both the game name and tag are required (e.g., Player#NA1).");
+      return;
+    }
+
+    if (tagLine.includes("#")) {
+      setValidationError("Tag should not contain additional # characters.");
       return;
     }
 

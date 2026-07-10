@@ -3,6 +3,7 @@ import {
   getAccountByRiotId,
   getMatchIdsByPuuid,
   getMatchDetails,
+  getLatestDdragonVersion,
   RiotApiError,
 } from "@/lib/riot-api";
 import type { MatchSummary, ApiSuccessResponse, ApiErrorResponse } from "@/lib/types";
@@ -51,36 +52,45 @@ export async function GET(request: NextRequest) {
     // Step 2: Get recent match IDs
     const matchIds = await getMatchIdsByPuuid(account.puuid, 10);
 
-    // Step 3: Fetch details for each match
-    const matchDetails = await Promise.all(
+    // Step 3: Fetch details for each match using Promise.allSettled for partial-failure resilience
+    const matchResults = await Promise.allSettled(
       matchIds.map((matchId) => getMatchDetails(matchId))
     );
 
-    // Step 4: Parse match data into MatchSummary format
-    const matches: MatchSummary[] = matchDetails.map((match) => {
-      const participant = match.info.participants.find(
-        (p) => p.puuid === account.puuid
-      );
+    // Step 4: Get latest Data Dragon version for champion icon URLs
+    const ddragonVersion = await getLatestDdragonVersion();
 
-      const kills = participant?.kills ?? 0;
-      const deaths = participant?.deaths ?? 0;
-      const assists = participant?.assists ?? 0;
-      const kda = deaths === 0 ? "Perfect" : ((kills + assists) / deaths).toFixed(2);
-      const championName = participant?.championName ?? "Unknown";
+    // Step 5: Parse match data into MatchSummary format (only include successful fetches)
+    const matches: MatchSummary[] = matchResults
+      .filter(
+        (result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof getMatchDetails>>> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => {
+        const match = result.value;
+        const participant = match.info.participants.find(
+          (p) => p.puuid === account.puuid
+        );
 
-      return {
-        matchId: match.metadata.matchId,
-        champion: championName,
-        championIcon: `https://ddragon.leagueoflegends.com/cdn/15.1.1/img/champion/${championName}.png`,
-        kills,
-        deaths,
-        assists,
-        kda,
-        win: participant?.win ?? false,
-        gameDuration: match.info.gameDuration,
-        gameMode: match.info.gameMode,
-      };
-    });
+        const kills = participant?.kills ?? 0;
+        const deaths = participant?.deaths ?? 0;
+        const assists = participant?.assists ?? 0;
+        const kda = deaths === 0 ? "Perfect" : ((kills + assists) / deaths).toFixed(2);
+        const championName = participant?.championName ?? "Unknown";
+
+        return {
+          matchId: match.metadata.matchId,
+          champion: championName,
+          championIcon: `https://ddragon.leagueoflegends.com/cdn/${ddragonVersion}/img/champion/${championName}.png`,
+          kills,
+          deaths,
+          assists,
+          kda,
+          win: participant?.win ?? false,
+          gameDuration: match.info.gameDuration,
+          gameMode: match.info.gameMode,
+        };
+      });
 
     const responseBody: ApiSuccessResponse = {
       matches,
