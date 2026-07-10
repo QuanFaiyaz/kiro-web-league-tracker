@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Update the API route error handling for expired/invalid API key (403 status) to return a user-friendly 'Service temporarily unavailable' message instead of exposing the internal error. Also handle 401 status the same way since the Riot API may return either for an expired key.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "In app/api/riot/route.ts, update the catch block that handles RiotApiError. When the error status is 401 or 403, return a response with message 'Service temporarily unavailable, please try again later' and HTTP status 503 instead of the current behavior of returning the raw error message and status.",
     "Ensure the ApiErrorResponse type is used for the response body, maintaining consistency with the existing pattern.",
@@ -19,5 +19,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Node.js was not pre-installed; used mise to install node@22. npm run lint and npm run build both pass. mise.toml was created in project root but not committed as part of the feature commit to keep it focused."
 }
