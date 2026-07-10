@@ -29,18 +29,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Validate gameName length (3-16 characters per Riot ID format)
-  if (gameName.length < 3 || gameName.length > 16) {
+  // Validate gameName length (1-16 characters per Riot API docs)
+  if (gameName.length < 1 || gameName.length > 16) {
     return Response.json(
-      { error: "gameName must be between 3 and 16 characters", status: 400 } satisfies ApiErrorResponse,
+      { error: "gameName must be between 1 and 16 characters", status: 400 } satisfies ApiErrorResponse,
       { status: 400 }
     );
   }
 
-  // Validate tagLine length (2-5 characters per Riot ID format)
-  if (tagLine.length < 2 || tagLine.length > 5) {
+  // Validate tagLine length (1-5 characters per Riot API docs)
+  if (tagLine.length < 1 || tagLine.length > 5) {
     return Response.json(
-      { error: "tagLine must be between 2 and 5 characters", status: 400 } satisfies ApiErrorResponse,
+      { error: "tagLine must be between 1 and 5 characters", status: 400 } satisfies ApiErrorResponse,
       { status: 400 }
     );
   }
@@ -61,11 +61,24 @@ export async function GET(request: NextRequest) {
     const ddragonVersion = await getLatestDdragonVersion();
 
     // Step 5: Parse match data into MatchSummary format (only include successful fetches)
-    const matches: MatchSummary[] = matchResults
-      .filter(
-        (result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof getMatchDetails>>> =>
-          result.status === "fulfilled"
-      )
+    const fulfilledResults = matchResults.filter(
+      (result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof getMatchDetails>>> =>
+        result.status === "fulfilled"
+    );
+
+    // If match IDs were returned but all detail fetches failed, report an error
+    // rather than silently returning an empty matches array
+    if (matchIds.length > 0 && fulfilledResults.length === 0) {
+      return Response.json(
+        {
+          error: "Match history was found but match details could not be retrieved. This may be due to rate limiting or a temporary issue. Please try again later.",
+          status: 502,
+        } satisfies ApiErrorResponse,
+        { status: 502 }
+      );
+    }
+
+    const matches: MatchSummary[] = fulfilledResults
       .map((result) => {
         const match = result.value;
         const participant = match.info.participants.find(
