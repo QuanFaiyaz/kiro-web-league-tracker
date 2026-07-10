@@ -58,7 +58,7 @@ export default function Dashboard() {
         </section>
       )}
 
-      {matches.length > 0 && !isLoading && !error && (
+      {account && !isLoading && !error && (
         <MatchHistory matches={matches} />
       )}
     </main>
