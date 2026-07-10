@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
           kda,
           win: participant?.win ?? false,
           gameDuration: match.info.gameDuration,
-          gameMode: queueType,
+          gameMode: match.info.gameMode,
           queueId,
           queueType,
           items,

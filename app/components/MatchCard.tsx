@@ -1,15 +1,10 @@
 import Image from "next/image";
 import { MatchSummary } from "@/lib/types";
+import { formatDuration } from "@/lib/format-duration";
 
 interface MatchCardProps {
   match: MatchSummary;
   onClick?: () => void;
-}
-
-function formatDuration(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
 export default function MatchCard({ match, onClick }: MatchCardProps) {
@@ -71,7 +66,7 @@ export default function MatchCard({ match, onClick }: MatchCardProps) {
             <span className="text-gray-300 text-xs">
               {formatDuration(match.gameDuration)}
             </span>
-            <span className="text-xs text-gray-500">{match.gameMode}</span>
+            <span className="text-xs text-gray-500">{match.queueType}</span>
           </div>
         </div>
       </div>

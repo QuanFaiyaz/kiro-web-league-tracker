@@ -3,16 +3,20 @@
 import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { MatchSummary } from "@/lib/types";
+import { formatDuration } from "@/lib/format-duration";
 
 interface MatchDetailModalProps {
   match: MatchSummary;
   onClose: () => void;
 }
 
-function formatDuration(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
+/**
+ * Parses a KDA string to a numeric value.
+ * Handles "Perfect" (zero deaths) by returning Infinity.
+ */
+function parseKdaValue(kda: string): number {
+  if (kda === "Perfect") return Infinity;
+  return parseFloat(kda);
 }
 
 function getKdaRating(kda: number): { label: string; color: string } {
@@ -24,7 +28,7 @@ function getKdaRating(kda: number): { label: string; color: string } {
 
 function generatePerformanceFeedback(match: MatchSummary): string[] {
   const feedback: string[] = [];
-  const kdaValue = parseFloat(match.kda);
+  const kdaValue = parseKdaValue(match.kda);
   const kdaRating = getKdaRating(kdaValue);
 
   // KDA analysis
@@ -86,7 +90,7 @@ function generatePerformanceFeedback(match: MatchSummary): string[] {
 
 function generateMentalTips(match: MatchSummary): string[] {
   const tips: string[] = [];
-  const kdaValue = parseFloat(match.kda);
+  const kdaValue = parseKdaValue(match.kda);
 
   if (match.win) {
     tips.push(
@@ -142,9 +146,13 @@ export default function MatchDetailModal({
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    // Lock body scroll when modal is open
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     modalRef.current?.focus();
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
     };
   }, [handleKeyDown]);
 
@@ -161,7 +169,7 @@ export default function MatchDetailModal({
     : "border-red-500/40";
   const resultText = match.win ? "text-green-400" : "text-red-400";
   const resultLabel = match.win ? "Victory" : "Defeat";
-  const kdaValue = parseFloat(match.kda);
+  const kdaValue = parseKdaValue(match.kda);
   const kdaRating = getKdaRating(kdaValue);
   const performanceFeedback = generatePerformanceFeedback(match);
   const mentalTips = generateMentalTips(match);
@@ -176,7 +184,6 @@ export default function MatchDetailModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       onClick={handleBackdropClick}
-      aria-hidden="true"
     >
       <div
         ref={modalRef}
