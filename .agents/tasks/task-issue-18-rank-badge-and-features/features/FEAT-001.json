@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix rank badge not showing + add animated shimmer effect for Diamond+ tiers + graceful degradation when ranked data fails to load",
+  "status": "completed",
+  "steps": [
+    "Install dependencies and verify baseline build passes: run 'bun install' and 'bunx next build' in /projects/sandbox/kiro-web-league-tracker",
+    "Fix the RankBadge bug in app/components/RankBadge.tsx: The component renders correctly but the data may never arrive because the API silently swallows errors. Add defensive handling for undefined/null tier values and normalize tier to uppercase. Ensure the badge actually renders visible content even if tier is unknown.",
+    "Update app/api/riot/route.ts: Instead of silently swallowing ranked data errors, capture the error state and return a 'rankedError' field in the response so the frontend knows ranked data specifically failed (vs just not being ranked).",
+    "Update lib/types.ts: Add 'rankedError?: string' to ApiSuccessResponse interface.",
+    "Update app/components/Dashboard.tsx: Add state for rankedError. When rankedError is present, show a subtle inline message like 'Ranked data unavailable' instead of showing nothing. This implements error boundary per section - if rank data fails, match history still shows.",
+    "Add animated shimmer/glow effect to RankBadge for Diamond+ tiers (DIAMOND, MASTER, GRANDMASTER, CHALLENGER). Add a CSS keyframe animation in app/globals.css for a shimmer glow effect, then conditionally apply it in RankBadge.tsx for those high tiers.",
+    "Verify the build passes with 'bunx next build' and lint passes with 'bunx eslint .'"
+  ],
+  "acceptance_criteria": [
+    "RankBadge component handles edge cases: undefined tier, empty tier string, lowercase tier - all render gracefully without crashing",
+    "When ranked API call fails, Dashboard shows 'Ranked data unavailable' message instead of showing nothing",
+    "Match history still displays normally even when ranked data fails (graceful degradation)",
+    "Diamond, Master, Grandmaster, and Challenger rank badges have a visible shimmer/glow animation",
+    "Build succeeds with zero errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bunx eslint .' and confirm zero errors",
+    "Run 'bunx next build' and confirm successful build with no TypeScript or compilation errors"
+  ],
+  "blocked_reason": null,
+  "findings": "All acceptance criteria met. Build and lint pass clean. The NotImplementedError warnings from Bun about worker_threads are pre-existing and do not affect the build outcome."
+}

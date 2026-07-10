@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Add champion performance stats, role distribution chart, and performance trends chart using recharts",
+  "status": "pending",
+  "steps": [
+    "Install recharts: run 'bun add recharts' in /projects/sandbox/kiro-web-league-tracker. Recharts is a lightweight React charting library that works well with React 19.",
+    "Create app/components/ChampionStats.tsx: Aggregate match data to show per-champion stats. For each unique champion in the matches array, compute: games played, win rate (%), average KDA, average CS/min. Display as a responsive table/card grid sorted by games played. Include the champion icon using next/image. Show at least the top 5-8 most played champions.",
+    "Create app/components/RoleDistribution.tsx: A donut/pie chart showing the distribution of roles played. Since the current MatchSummary type does not include role data, derive roles from queueType and champion data patterns OR add a note that role data requires API enhancement. For now, show a distribution based on game modes (Ranked Solo, Ranked Flex, ARAM, Normal, etc.) as a proxy. Use recharts PieChart with ResponsiveContainer.",
+    "Create app/components/PerformanceTrends.tsx: A line chart showing KDA and win rate trends over the loaded matches (up to 20 games). X-axis is match index (most recent first). Y-axis for KDA (line) and win rate (rolling average over last 5 games as a second line). Use recharts LineChart with ResponsiveContainer, Tooltip, and Legend. Support dark mode colors.",
+    "Update lib/types.ts if needed for any new interfaces (ChampionStatsSummary, etc.).",
+    "Create app/components/AnalyticsSection.tsx: A wrapper component that renders ChampionStats, RoleDistribution, and PerformanceTrends in a responsive grid layout. Include section headings and only render when matches are available.",
+    "Update app/components/Dashboard.tsx: Add AnalyticsSection below the summoner info and above MatchHistory (or in a tabbed view). Only show when matches are loaded. Pass the full matches array to it.",
+    "Verify the build passes with 'bunx next build' and lint passes with 'bunx eslint .'"
+  ],
+  "acceptance_criteria": [
+    "Champion performance table shows win rate, average KDA, and CS/min per champion with champion icons",
+    "Role/game mode distribution renders as a donut chart with labels and percentages",
+    "Performance trends line chart shows KDA trend across loaded matches",
+    "All charts are responsive and render correctly in both light and dark mode",
+    "Charts use recharts library with proper ResponsiveContainer wrappers",
+    "Build succeeds with zero errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bunx eslint .' and confirm zero errors",
+    "Run 'bunx next build' and confirm successful build with no TypeScript or compilation errors"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

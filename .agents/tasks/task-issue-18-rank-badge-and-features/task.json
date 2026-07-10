@@ -1,0 +1,7 @@
+{
+  "task_id": "task-issue-18-rank-badge-and-features",
+  "task_description": "Fix rank badge not showing bug, add animated rank badge, skeleton loading, toast notifications, match filters, champion performance stats, role distribution chart, performance trends chart, champion splash art backgrounds, and error boundary per section (graceful degradation).",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}

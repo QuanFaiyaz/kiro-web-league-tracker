@@ -1,0 +1,29 @@
+{
+  "project_type": "Next.js 16 app with React 19, Tailwind CSS 4, TypeScript, App Router",
+  "language": "TypeScript/React",
+  "build_system": "bun (npm-compatible) with Next.js CLI. No npm/node installed - use bunx for next commands.",
+  "test_framework": "No test framework configured yet. ESLint for linting.",
+  "build_command": "cd /projects/sandbox/kiro-web-league-tracker && bunx next build",
+  "test_command": "cd /projects/sandbox/kiro-web-league-tracker && bunx eslint .",
+  "verification_instructions": "1. Run 'bunx eslint .' to check lint. 2. Run 'bunx next build' to verify build succeeds. Both must pass with zero errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd /projects/sandbox/kiro-web-league-tracker 2. bun install (already done)",
+  "environment_constraints": "No npm/node binary available - use bun/bunx instead. OPEN_INTERNET network mode allows package installs. AGENTS.md warns about Next.js breaking changes but node_modules/next/dist/docs/ does not exist. Build uses bunx next build.",
+  "contribution_requirements": "Zero lint errors, zero build errors, responsive Tailwind CSS, semantic HTML, accessibility (ARIA labels), no console.log in production, loading/empty/error states for features.",
+  "key_patterns": "Components are 'use client' in app/components/. Types live in lib/types.ts. API route in app/api/riot/route.ts. Data fetched client-side via fetch in Dashboard.tsx. Tailwind 4 with @import 'tailwindcss' and @custom-variant. Dark mode via .dark class on html element. Image optimization via next/image with ddragon.leagueoflegends.com allowlisted.",
+  "relevant_files": [
+    "app/components/RankBadge.tsx",
+    "app/components/Dashboard.tsx",
+    "app/components/MatchHistory.tsx",
+    "app/components/MatchCard.tsx",
+    "app/components/LoadingSpinner.tsx",
+    "app/components/ErrorDisplay.tsx",
+    "app/api/riot/route.ts",
+    "lib/types.ts",
+    "lib/riot-api.ts",
+    "app/globals.css",
+    "app/layout.tsx",
+    "next.config.ts"
+  ],
+  "directory_structure": "app/ - Next.js app router pages and components. app/components/ - all client components. app/api/riot/ - API route for Riot Games. lib/ - utility functions and types. public/ - static assets."
+}

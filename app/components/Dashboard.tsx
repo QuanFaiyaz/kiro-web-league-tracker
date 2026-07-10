@@ -1,13 +1,68 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import SearchForm from "./SearchForm";
 import RegionSelector from "./RegionSelector";
 import MatchHistory from "./MatchHistory";
 import ErrorDisplay from "./ErrorDisplay";
-import LoadingSpinner from "./LoadingSpinner";
+import SkeletonLoader from "./SkeletonLoader";
 import RankBadge from "./RankBadge";
+import MatchFilters, { type MatchFilterValues, type GameModeFilter, type DateRangeFilter } from "./MatchFilters";
+import { useToast } from "./ToastProvider";
 import { MatchSummary, RiotAccount, ApiSuccessResponse, ApiErrorResponse, Region, RankedEntry } from "@/lib/types";
+
+function applyFilters(matches: MatchSummary[], filters: MatchFilterValues): MatchSummary[] {
+  let filtered = matches;
+
+  // Champion filter
+  if (filters.champion.trim()) {
+    const search = filters.champion.trim().toLowerCase();
+    filtered = filtered.filter((m) =>
+      m.champion.toLowerCase().includes(search)
+    );
+  }
+
+  // Game mode filter
+  if (filters.gameMode !== "all") {
+    filtered = filtered.filter((m) => {
+      const qt = m.queueType.toLowerCase();
+      switch (filters.gameMode as GameModeFilter) {
+        case "ranked_solo":
+          return qt.includes("ranked solo") || m.queueId === 420;
+        case "ranked_flex":
+          return qt.includes("ranked flex") || m.queueId === 440;
+        case "normal":
+          return qt.includes("normal") || m.queueId === 400 || m.queueId === 430;
+        case "aram":
+          return qt.includes("aram") || m.queueId === 450;
+        default:
+          return true;
+      }
+    });
+  }
+
+  // Date range filter
+  if (filters.dateRange !== "all") {
+    const now = Date.now();
+    let cutoff = 0;
+    switch (filters.dateRange as DateRangeFilter) {
+      case "24h":
+        cutoff = now - 24 * 60 * 60 * 1000;
+        break;
+      case "7d":
+        cutoff = now - 7 * 24 * 60 * 60 * 1000;
+        break;
+      case "30d":
+        cutoff = now - 30 * 24 * 60 * 60 * 1000;
+        break;
+    }
+    if (cutoff > 0) {
+      filtered = filtered.filter((m) => m.gameStartTimestamp >= cutoff);
+    }
+  }
+
+  return filtered;
+}
 
 export default function Dashboard() {
   const [matches, setMatches] = useState<MatchSummary[]>([]);
@@ -21,7 +76,15 @@ export default function Dashboard() {
   const [warning, setWarning] = useState<string | null>(null);
   const [region, setRegion] = useState<Region>("americas");
   const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState<MatchFilterValues>({
+    champion: "",
+    gameMode: "all",
+    dateRange: "all",
+  });
   const lastSearchRef = useRef<{ gameName: string; tagLine: string } | null>(null);
+  const { addToast } = useToast();
+
+  const filteredMatches = useMemo(() => applyFilters(matches, filters), [matches, filters]);
 
   const handleSearch = useCallback(async (gameName: string, tagLine: string) => {
     setIsLoading(true);
@@ -32,6 +95,7 @@ export default function Dashboard() {
     setRankedData([]);
     setRankedError(null);
     setHasMore(true);
+    setFilters({ champion: "", gameMode: "all", dateRange: "all" });
     lastSearchRef.current = { gameName, tagLine };
 
     try {
@@ -41,6 +105,7 @@ export default function Dashboard() {
       if (!response.ok) {
         const errorData: ApiErrorResponse = await response.json();
         setError({ message: errorData.error, status: errorData.status });
+        addToast(errorData.error, "error");
         return;
       }
 
@@ -59,12 +124,14 @@ export default function Dashboard() {
       if (data.matches.length < 10) {
         setHasMore(false);
       }
+      addToast(`Found ${data.matches.length} matches for ${data.account.gameName}`, "success");
     } catch {
       setError({ message: "Failed to connect to the server. Please check your connection and try again." });
+      addToast("Failed to connect to the server. Please try again.", "error");
     } finally {
       setIsLoading(false);
     }
-  }, [region]);
+  }, [region, addToast]);
 
   const handleLoadMore = useCallback(async () => {
     if (!lastSearchRef.current || isLoadingMore) return;
@@ -84,6 +151,7 @@ export default function Dashboard() {
 
       if (!response.ok) {
         setLoadMoreError(true);
+        addToast("Failed to load more matches. Please try again.", "error");
         return;
       }
 
@@ -98,10 +166,11 @@ export default function Dashboard() {
       }
     } catch {
       setLoadMoreError(true);
+      addToast("Failed to load more matches. Please try again.", "error");
     } finally {
       setIsLoadingMore(false);
     }
-  }, [region, matches.length, isLoadingMore]);
+  }, [region, matches.length, isLoadingMore, addToast]);
 
   useEffect(() => {
     if (lastSearchRef.current) {
@@ -122,9 +191,9 @@ export default function Dashboard() {
       </div>
 
       <div className="pt-2">
-        {isLoading && <LoadingSpinner />}
+        {isLoading && <SkeletonLoader />}
 
-        {error && <ErrorDisplay message={error.message} status={error.status} />}
+        {error && !isLoading && <ErrorDisplay message={error.message} status={error.status} />}
 
         {warning && !isLoading && !error && (
           <aside aria-label="Warning" className="rounded-lg border border-yellow-500/50 bg-yellow-50/50 px-4 py-3 text-sm text-yellow-700 dark:border-yellow-600/50 dark:bg-yellow-900/20 dark:text-yellow-300">
@@ -153,8 +222,19 @@ export default function Dashboard() {
           </section>
         )}
 
+        {account && !isLoading && !error && matches.length > 0 && (
+          <div className="mt-4">
+            <MatchFilters
+              filters={filters}
+              onChange={setFilters}
+              totalMatches={matches.length}
+              filteredCount={filteredMatches.length}
+            />
+          </div>
+        )}
+
         {account && !isLoading && !error && (
-          <MatchHistory matches={matches} />
+          <MatchHistory matches={filteredMatches} />
         )}
 
         {account && !isLoading && !error && matches.length > 0 && hasMore && (
