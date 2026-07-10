@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "chore",
   "description": "Set up project environment, install dependencies, verify baseline build, and configure Next.js for the Riot API integration.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Run 'source /root/.nvm/nvm.sh && nvm use 22' to ensure Node.js is available, then 'cd /projects/sandbox/kiro-web-league-tracker && npm install' to install existing dependencies and verify they work.",
     "Run 'npm run build' to confirm the baseline project builds successfully.",
@@ -27,5 +27,5 @@
     "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run lint"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All dependencies installed cleanly (428 packages). Baseline build and lint pass with Next.js 16.2.4 Turbopack. The .gitignore had .env* which also ignored .env.example - added !.env.example exception. Build confirms .env.local is being loaded (shows 'Environments: .env.local' in output). No additional packages needed - Node.js 22 native fetch is sufficient for API calls."
 }
