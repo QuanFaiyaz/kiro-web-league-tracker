@@ -107,6 +107,36 @@ export interface RiotMatchResponse {
   info: RiotMatchInfo;
 }
 
+// --- Ranked types ---
+
+export type PlatformId = "na1" | "euw1" | "eun1" | "kr" | "jp1" | "oc1" | "br1" | "la1" | "la2" | "tr1" | "ru" | "ph2" | "sg2" | "th2" | "tw2" | "vn2";
+
+export const REGION_TO_PLATFORM: Record<Region, PlatformId> = {
+  americas: "na1",
+  europe: "euw1",
+  asia: "kr",
+  sea: "oc1",
+};
+
+export interface RankedEntry {
+  queueType: string;
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+  wins: number;
+  losses: number;
+  summonerId: string;
+}
+
+export interface RiotSummonerResponse {
+  id: string;
+  accountId: string;
+  puuid: string;
+  profileIconId: number;
+  revisionDate: number;
+  summonerLevel: number;
+}
+
 // --- API error response ---
 
 export interface ApiErrorResponse {
@@ -118,4 +148,5 @@ export interface ApiSuccessResponse {
   matches: MatchSummary[];
   account: RiotAccount;
   warning?: string;
+  rankedData?: RankedEntry[];
 }

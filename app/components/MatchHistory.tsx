@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import { MatchSummary } from "@/lib/types";
 import MatchCard from "./MatchCard";
 import MatchDetailModal from "./MatchDetailModal";
+import WinLossStreak from "./WinLossStreak";
+import WinRateBar from "./WinRateBar";
 
 interface MatchHistoryProps {
   matches: MatchSummary[];
@@ -38,14 +40,27 @@ export default function MatchHistory({ matches }: MatchHistoryProps) {
           Ordered from most recent to oldest
         </p>
       </div>
+
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <WinLossStreak matches={matches} />
+        <div className="w-full sm:max-w-xs">
+          <WinRateBar matches={matches} />
+        </div>
+      </div>
+
       <div className="flex flex-col gap-3">
         {matches.map((match, index) => (
-          <MatchCard
+          <div
             key={match.matchId}
-            match={match}
-            matchIndex={index}
-            onClick={() => handleMatchClick(match)}
-          />
+            className="animate-[fadeSlideUp_0.4s_ease-out_both]"
+            style={{ animationDelay: `${index * 75}ms` }}
+          >
+            <MatchCard
+              match={match}
+              matchIndex={index}
+              onClick={() => handleMatchClick(match)}
+            />
+          </div>
         ))}
       </div>
       {selectedMatch && (

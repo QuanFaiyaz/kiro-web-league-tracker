@@ -4,10 +4,13 @@ import {
   getMatchIdsByPuuid,
   getMatchDetails,
   getLatestDdragonVersion,
+  getSummonerByPuuid,
+  getRankedEntries,
+  getPlatformId,
   RiotApiError,
 } from "@/lib/riot-api";
 import { getQueueTypeLabel } from "@/lib/queue-labels";
-import type { MatchSummary, MatchItem, ApiSuccessResponse, ApiErrorResponse, Region } from "@/lib/types";
+import type { MatchSummary, MatchItem, ApiSuccessResponse, ApiErrorResponse, Region, RankedEntry } from "@/lib/types";
 import { REGION_BASE_URLS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +28,8 @@ export async function GET(request: NextRequest) {
   const gameName = searchParams.get("gameName");
   const tagLine = searchParams.get("tagLine");
   const regionParam = searchParams.get("region");
+  const startParam = searchParams.get("start");
+  const start = startParam ? Math.max(0, parseInt(startParam, 10) || 0) : 0;
 
   // Validate and default the region parameter
   const region: Region = VALID_REGIONS.includes(regionParam as Region)
@@ -62,7 +67,7 @@ export async function GET(request: NextRequest) {
     const account = await getAccountByRiotId(gameName, tagLine);
 
     // Step 2: Get recent match IDs using the selected region
-    const matchIds = await getMatchIdsByPuuid(account.puuid, 10, region);
+    const matchIds = await getMatchIdsByPuuid(account.puuid, 10, region, start);
 
     // Step 3: Fetch details for each match using Promise.allSettled for partial-failure resilience
     const matchResults = await Promise.allSettled(
@@ -162,6 +167,21 @@ export async function GET(request: NextRequest) {
         tagLine: account.tagLine,
       },
     };
+
+    // Fetch ranked data only on initial load (start === 0)
+    if (start === 0) {
+      try {
+        const platformId = getPlatformId(region);
+        const summoner = await getSummonerByPuuid(account.puuid, platformId);
+        const rankedEntries: RankedEntry[] = await getRankedEntries(summoner.id, platformId);
+        if (rankedEntries.length > 0) {
+          responseBody.rankedData = rankedEntries;
+        }
+      } catch {
+        // Ranked lookup failure is non-fatal - user might not be ranked
+        // or API key might lack ranked permissions
+      }
+    }
 
     // If account was found but no match IDs were returned, inform the user.
     if (matchIds.length === 0) {

@@ -1,9 +1,12 @@
 import type {
   RiotAccountResponse,
   RiotMatchResponse,
+  RiotSummonerResponse,
+  RankedEntry,
   Region,
+  PlatformId,
 } from "@/lib/types";
-import { REGION_BASE_URLS } from "@/lib/types";
+import { REGION_BASE_URLS, REGION_TO_PLATFORM } from "@/lib/types";
 
 // The account v1 endpoint uses americas as the global routing value.
 const ACCOUNT_API_BASE = "https://americas.api.riotgames.com";
@@ -132,14 +135,16 @@ export async function getAccountByRiotId(
  * Retrieves a list of match IDs for a given PUUID.
  * Defaults to the 10 most recent matches.
  * Uses the specified region for routing.
+ * Supports offset-based pagination via the start parameter.
  */
 export async function getMatchIdsByPuuid(
   puuid: string,
   count: number = 10,
-  region: Region = "americas"
+  region: Region = "americas",
+  start: number = 0
 ): Promise<string[]> {
   const baseUrl = getRegionBaseUrl(region);
-  const url = `${baseUrl}/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids?count=${count}`;
+  const url = `${baseUrl}/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids?start=${start}&count=${count}`;
   const response = await riotFetch(url);
   return response.json() as Promise<string[]>;
 }
@@ -156,4 +161,37 @@ export async function getMatchDetails(
   const url = `${baseUrl}/lol/match/v5/matches/${encodeURIComponent(matchId)}`;
   const response = await riotFetch(url);
   return response.json() as Promise<RiotMatchResponse>;
+}
+
+/**
+ * Returns the platform ID for a given region.
+ */
+export function getPlatformId(region: Region): PlatformId {
+  return REGION_TO_PLATFORM[region];
+}
+
+/**
+ * Looks up a summoner by PUUID using the platform-specific endpoint.
+ * Required for obtaining the summonerId needed for ranked lookups.
+ */
+export async function getSummonerByPuuid(
+  puuid: string,
+  platformId: PlatformId
+): Promise<RiotSummonerResponse> {
+  const url = `https://${platformId}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${encodeURIComponent(puuid)}`;
+  const response = await riotFetch(url);
+  return response.json() as Promise<RiotSummonerResponse>;
+}
+
+/**
+ * Retrieves ranked entries for a summoner.
+ * Returns an array of queue entries (Solo/Duo, Flex, etc.).
+ */
+export async function getRankedEntries(
+  summonerId: string,
+  platformId: PlatformId
+): Promise<RankedEntry[]> {
+  const url = `https://${platformId}.api.riotgames.com/lol/league/v4/entries/by-summoner/${encodeURIComponent(summonerId)}`;
+  const response = await riotFetch(url);
+  return response.json() as Promise<RankedEntry[]>;
 }
