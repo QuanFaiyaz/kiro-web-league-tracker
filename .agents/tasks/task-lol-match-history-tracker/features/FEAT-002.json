@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Implement server-side API Route Handlers to proxy Riot Games API calls (account lookup by Riot ID and match history retrieval), keeping the API key secure on the server side. Also implement the Riot API utility/service layer.",
+  "status": "pending",
+  "steps": [
+    "Create app/api/riot/route.ts with a GET handler that accepts query params 'gameName' and 'tagLine'. This handler will: (1) Validate the inputs, (2) Call Riot account-v1 API to get PUUID: GET https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}, (3) Call match-v5 API to get match IDs: GET https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?count=10, (4) For each match ID, call GET https://americas.api.riotgames.com/lol/match/v5/matches/{matchId} to get match details, (5) Parse and return formatted match data. Use process.env.RIOT_API_KEY for the API key header (X-Riot-Token). Reference the Next.js 16 Route Handler pattern in node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/route.md.",
+    "Create a lib/riot-api.ts utility module that encapsulates the Riot API calls: (a) getAccountByRiotId(gameName: string, tagLine: string) - returns PUUID, (b) getMatchIdsByPuuid(puuid: string, count?: number) - returns array of match ID strings, (c) getMatchDetails(matchId: string) - returns match detail object. Each function should use fetch with the X-Riot-Token header and handle HTTP errors (404 for not found, 429 for rate limited, etc.).",
+    "Create a lib/types.ts file defining TypeScript interfaces: RiotAccount (puuid, gameName, tagLine), MatchSummary (matchId, champion, championIcon, kills, deaths, assists, kda, win, gameDuration, gameMode), and the Riot API response shapes needed for type safety.",
+    "In the route handler, implement proper error responses: 400 for missing/invalid params, 404 if Riot ID not found, 429 if rate limited (with Retry-After header forwarding), 500 for unexpected errors. Return a JSON response with a 'matches' array of MatchSummary objects on success.",
+    "Ensure the route handler has 'export const dynamic = \"force-dynamic\"' to prevent caching of API responses.",
+    "Add input validation: gameName must be 3-16 characters, tagLine must be 2-5 characters (Riot ID format requirements)."
+  ],
+  "acceptance_criteria": [
+    "app/api/riot/route.ts exists and exports a GET function",
+    "lib/riot-api.ts exists with getAccountByRiotId, getMatchIdsByPuuid, and getMatchDetails functions",
+    "lib/types.ts exists with TypeScript interfaces for API data",
+    "API key is read from process.env.RIOT_API_KEY and never exposed in responses",
+    "Error handling covers 400, 404, 429, and 500 cases with appropriate JSON error responses",
+    "Route handler uses dynamic = 'force-dynamic' to prevent caching",
+    "npm run build succeeds with the new route handler",
+    "npm run lint passes"
+  ],
+  "verification": [
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run build",
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run lint"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

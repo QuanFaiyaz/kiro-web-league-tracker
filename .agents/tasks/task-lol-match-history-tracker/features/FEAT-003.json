@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Build the frontend dashboard UI: a search input for Riot ID lookup, match history display with match cards showing champion icon, KDA, win/loss, and game duration. Use responsive Tailwind CSS and semantic HTML throughout.",
+  "status": "pending",
+  "steps": [
+    "Replace app/page.tsx with the main dashboard page. Structure using semantic HTML: <header> for app title/branding, <main> for the search and results area, <footer> for attribution. Use a dark-themed design fitting the LoL aesthetic.",
+    "Create app/components/SearchForm.tsx - a client component ('use client') with a controlled input field that accepts 'GameName#Tag' format. Include: (a) An input with placeholder text showing the expected format, (b) A submit button, (c) Client-side validation that splits on '#' and validates both parts exist, (d) Loading state indicator while fetching, (e) Error message display area. Use responsive Tailwind classes (full width on mobile, constrained on larger screens).",
+    "Create app/components/MatchCard.tsx - a presentational component that displays a single match result. Include: (a) Champion icon (using next/image with the Data Dragon URL: https://ddragon.leagueoflegends.com/cdn/15.1.1/img/champion/{championName}.png), (b) Win/Loss indicator with green/red color coding, (c) KDA display (kills/deaths/assists and calculated ratio), (d) Game duration formatted as minutes:seconds, (e) Game mode label. Use semantic HTML (<article> for each card) and responsive grid layout.",
+    "Create app/components/MatchHistory.tsx - a component that renders a list of MatchCard components. Accept an array of MatchSummary objects. Show a message when no matches are found. Use a responsive grid/list layout (single column on mobile, multi-column on desktop).",
+    "Create app/components/ErrorDisplay.tsx - a component for showing user-friendly error messages (not found, rate limited, server error) with appropriate styling and suggested actions.",
+    "Create app/components/LoadingSpinner.tsx - a simple animated loading indicator component.",
+    "In the main page (app/page.tsx), wire everything together: SearchForm calls the /api/riot endpoint via fetch, passes results to MatchHistory, handles loading/error states with the respective components. Since this uses client interactivity, the page itself should be a client component or use a client component wrapper for the interactive parts.",
+    "Update app/layout.tsx metadata to reflect the app: title 'LoL Match History Tracker', description 'Track your League of Legends match performance'.",
+    "Update app/globals.css if needed for any custom styles not achievable with Tailwind utilities alone (minimal - prefer Tailwind classes)."
+  ],
+  "acceptance_criteria": [
+    "app/page.tsx renders a complete dashboard with semantic HTML (header, main, footer elements)",
+    "SearchForm component accepts Riot ID in 'GameName#Tag' format with client-side validation",
+    "MatchCard component displays champion icon, win/loss indicator, KDA, and game duration",
+    "MatchHistory component renders a responsive grid of match cards",
+    "ErrorDisplay component shows user-friendly error messages for different error types",
+    "LoadingSpinner component provides visual feedback during API calls",
+    "All components use responsive Tailwind CSS classes (mobile-first approach)",
+    "All layout sections use semantic HTML elements (header, main, nav, article, section, footer)",
+    "The page handles the full flow: input -> fetch -> display results or errors",
+    "npm run build succeeds",
+    "npm run lint passes",
+    "Champion icons use next/image with the ddragon.leagueoflegends.com domain configured in next.config.ts"
+  ],
+  "verification": [
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run build",
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run lint"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

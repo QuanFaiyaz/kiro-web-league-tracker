@@ -1,0 +1,7 @@
+{
+  "task_id": "task-lol-match-history-tracker",
+  "task_description": "Build a lightweight LoL Match History Tracker - a Next.js web app that allows players to look up their Riot ID (GameName#Tag) and view their last 10 matches with KDA, champion, win/loss, and game duration displayed in a clean, responsive dashboard.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}
