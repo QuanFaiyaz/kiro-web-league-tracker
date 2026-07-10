@@ -3,6 +3,13 @@ import type {
   RiotMatchResponse,
 } from "@/lib/types";
 
+// Regional routing value for Riot API requests. The account v1 endpoint
+// (/riot/account/v1/) works with any routing value for looking up accounts
+// globally, but match history endpoints (lol/match/v5) are region-specific.
+// This app currently only retrieves matches from Americas servers. Players on
+// EU or Asia servers will have their account resolved correctly, but their
+// match history will appear empty since those matches are stored on different
+// regional routing values (europe.api.riotgames.com, asia.api.riotgames.com).
 const RIOT_API_BASE = "https://americas.api.riotgames.com";
 const DDRAGON_VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json";
 
