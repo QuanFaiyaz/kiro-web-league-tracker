@@ -1,16 +1,19 @@
 import type {
   RiotAccountResponse,
   RiotMatchResponse,
+  Region,
 } from "@/lib/types";
+import { REGION_BASE_URLS } from "@/lib/types";
 
-// Regional routing value for Riot API requests. The account v1 endpoint
-// (/riot/account/v1/) works with any routing value for looking up accounts
-// globally, but match history endpoints (lol/match/v5) are region-specific.
-// This app currently only retrieves matches from Americas servers. Players on
-// EU or Asia servers will have their account resolved correctly, but their
-// match history will appear empty since those matches are stored on different
-// regional routing values (europe.api.riotgames.com, asia.api.riotgames.com).
-const RIOT_API_BASE = "https://americas.api.riotgames.com";
+// The account v1 endpoint uses americas as the global routing value.
+const ACCOUNT_API_BASE = "https://americas.api.riotgames.com";
+
+/**
+ * Returns the Riot API base URL for a given region.
+ */
+export function getRegionBaseUrl(region: Region): string {
+  return REGION_BASE_URLS[region];
+}
 const DDRAGON_VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json";
 
 /** Fallback Data Dragon version if the versions API is unreachable. */
@@ -114,12 +117,13 @@ async function riotFetch(url: string): Promise<Response> {
 /**
  * Looks up a Riot account by gameName and tagLine.
  * Returns the account PUUID and identity information.
+ * Uses the global americas endpoint since account lookups are not region-specific.
  */
 export async function getAccountByRiotId(
   gameName: string,
   tagLine: string
 ): Promise<RiotAccountResponse> {
-  const url = `${RIOT_API_BASE}/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
+  const url = `${ACCOUNT_API_BASE}/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`;
   const response = await riotFetch(url);
   return response.json() as Promise<RiotAccountResponse>;
 }
@@ -127,23 +131,29 @@ export async function getAccountByRiotId(
 /**
  * Retrieves a list of match IDs for a given PUUID.
  * Defaults to the 10 most recent matches.
+ * Uses the specified region for routing.
  */
 export async function getMatchIdsByPuuid(
   puuid: string,
-  count: number = 10
+  count: number = 10,
+  region: Region = "americas"
 ): Promise<string[]> {
-  const url = `${RIOT_API_BASE}/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids?count=${count}`;
+  const baseUrl = getRegionBaseUrl(region);
+  const url = `${baseUrl}/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids?count=${count}`;
   const response = await riotFetch(url);
   return response.json() as Promise<string[]>;
 }
 
 /**
  * Retrieves the full details of a specific match by match ID.
+ * Uses the specified region for routing.
  */
 export async function getMatchDetails(
-  matchId: string
+  matchId: string,
+  region: Region = "americas"
 ): Promise<RiotMatchResponse> {
-  const url = `${RIOT_API_BASE}/lol/match/v5/matches/${encodeURIComponent(matchId)}`;
+  const baseUrl = getRegionBaseUrl(region);
+  const url = `${baseUrl}/lol/match/v5/matches/${encodeURIComponent(matchId)}`;
   const response = await riotFetch(url);
   return response.json() as Promise<RiotMatchResponse>;
 }

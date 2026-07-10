@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import SearchForm from "./SearchForm";
+import RegionSelector from "./RegionSelector";
 import MatchHistory from "./MatchHistory";
 import ErrorDisplay from "./ErrorDisplay";
 import LoadingSpinner from "./LoadingSpinner";
-import { MatchSummary, RiotAccount, ApiSuccessResponse, ApiErrorResponse } from "@/lib/types";
+import { MatchSummary, RiotAccount, ApiSuccessResponse, ApiErrorResponse, Region } from "@/lib/types";
 
 export default function Dashboard() {
   const [matches, setMatches] = useState<MatchSummary[]>([]);
@@ -13,16 +14,19 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<{ message: string; status?: number } | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
+  const [region, setRegion] = useState<Region>("americas");
+  const lastSearchRef = useRef<{ gameName: string; tagLine: string } | null>(null);
 
-  const handleSearch = async (gameName: string, tagLine: string) => {
+  const handleSearch = useCallback(async (gameName: string, tagLine: string) => {
     setIsLoading(true);
     setError(null);
     setWarning(null);
     setMatches([]);
     setAccount(null);
+    lastSearchRef.current = { gameName, tagLine };
 
     try {
-      const params = new URLSearchParams({ gameName, tagLine });
+      const params = new URLSearchParams({ gameName, tagLine, region });
       const response = await fetch(`/api/riot?${params.toString()}`);
 
       if (!response.ok) {
@@ -42,12 +46,22 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [region]);
+
+  useEffect(() => {
+    if (lastSearchRef.current) {
+      handleSearch(lastSearchRef.current.gameName, lastSearchRef.current.tagLine);
+    }
+  }, [region, handleSearch]);
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-8">
       <section aria-label="Summoner search">
         <SearchForm onSearch={handleSearch} isLoading={isLoading} />
+      </section>
+
+      <section aria-label="Region selection">
+        <RegionSelector selectedRegion={region} onChange={setRegion} disabled={isLoading} />
       </section>
 
       {isLoading && <LoadingSpinner />}
