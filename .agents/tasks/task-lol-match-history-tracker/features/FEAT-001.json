@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Set up project environment, install dependencies, verify baseline build, and configure Next.js for the Riot API integration.",
+  "status": "completed",
+  "steps": [
+    "Run 'source /root/.nvm/nvm.sh && nvm use 22' to ensure Node.js is available, then 'cd /projects/sandbox/kiro-web-league-tracker && npm install' to install existing dependencies and verify they work.",
+    "Run 'npm run build' to confirm the baseline project builds successfully.",
+    "Run 'npm run lint' to confirm no lint errors exist.",
+    "No additional packages are needed - use the native fetch API (available in Node.js 22) for Riot API requests instead of axios.",
+    "Create a .env.local file with placeholder RIOT_API_KEY=RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx. Ensure .env.local is in .gitignore (it should be by default in Next.js).",
+    "Create a .env.example file documenting the required RIOT_API_KEY variable (without a real value) so collaborators know what's needed.",
+    "Update next.config.ts to add images.remotePatterns for ddragon.leagueoflegends.com (the Riot Data Dragon CDN that serves champion icons/images).",
+    "Verify the build still passes after config changes with 'npm run build'."
+  ],
+  "acceptance_criteria": [
+    "npm install completes without errors",
+    "npm run build completes successfully",
+    "npm run lint completes without errors",
+    ".env.local exists with RIOT_API_KEY placeholder",
+    ".env.example exists documenting the required variable",
+    "next.config.ts has images.remotePatterns configured for ddragon.leagueoflegends.com",
+    ".env.local is listed in .gitignore"
+  ],
+  "verification": [
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run build",
+    "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run lint"
+  ],
+  "blocked_reason": null,
+  "findings": "All dependencies installed cleanly (428 packages). Baseline build and lint pass with Next.js 16.2.4 Turbopack. The .gitignore had .env* which also ignored .env.example - added !.env.example exception. Build confirms .env.local is being loaded (shows 'Environments: .env.local' in output). No additional packages needed - Node.js 22 native fetch is sufficient for API calls."
+}
