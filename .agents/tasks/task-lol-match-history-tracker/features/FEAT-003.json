@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Build the frontend dashboard UI: a search input for Riot ID lookup, match history display with match cards showing champion icon, KDA, win/loss, and game duration. Use responsive Tailwind CSS and semantic HTML throughout.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Replace app/page.tsx with the main dashboard page. Structure using semantic HTML: <header> for app title/branding, <main> for the search and results area, <footer> for attribution. Use a dark-themed design fitting the LoL aesthetic.",
     "Create app/components/SearchForm.tsx - a client component ('use client') with a controlled input field that accepts 'GameName#Tag' format. Include: (a) An input with placeholder text showing the expected format, (b) A submit button, (c) Client-side validation that splits on '#' and validates both parts exist, (d) Loading state indicator while fetching, (e) Error message display area. Use responsive Tailwind classes (full width on mobile, constrained on larger screens).",
@@ -33,5 +33,5 @@
     "source /root/.nvm/nvm.sh && nvm use 22 && cd /projects/sandbox/kiro-web-league-tracker && npm run lint"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All components created successfully. Build and lint pass cleanly. The page is a client component since it manages state for search/loading/error flow. MatchCard and MatchHistory are server-compatible (no 'use client') but rendered within the client page. Used dark theme (gray-950 background) with indigo accents. Tailwind v4 inline @theme worked without issues. The static page generation succeeded, meaning the client component renders properly at build time."
 }
