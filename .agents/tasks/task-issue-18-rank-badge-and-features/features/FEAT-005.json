@@ -1,7 +1,7 @@
 {
   "id": "FEAT-005",
   "title": "Address code review feedback - toast cap, filter callbacks, aria-live, analytics label, splash URL",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add max 5 concurrent toasts to ToastProvider.tsx, evicting oldest when exceeded",
     "Remove useCallback wrappers in MatchFilters.tsx since they provide no benefit with unstable deps",
