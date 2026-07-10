@@ -1,0 +1,22 @@
+{
+  "id": "FEAT-002",
+  "type": "chore",
+  "description": "Create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' containing manual steps for the developer to regenerate and update the API key. Then create a PR with the code changes from FEAT-001 and enable auto-merge if the build passes.",
+  "status": "pending",
+  "steps": [
+    "Create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent'. The issue body should contain the exact markdown content specified in the task requirements with the manual steps.",
+    "Create a new git branch (e.g., fix/api-key-expired-handling), commit the changes from FEAT-001, and push to remote.",
+    "Create a pull request targeting main with a clear title and description explaining the changes.",
+    "Run npm run build to verify the build passes. If it passes, enable auto-merge on the PR. If it fails, add a comment 'Auto-merge blocked: build failed' instead."
+  ],
+  "acceptance_criteria": [
+    "A GitHub issue exists titled 'Alert: Riot API key expired' with 'urgent' label and the specified body content",
+    "A PR exists with the error handling changes from FEAT-001",
+    "The PR has auto-merge enabled (if build passes) or a comment explaining why not (if build fails)"
+  ],
+  "verification": [
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
