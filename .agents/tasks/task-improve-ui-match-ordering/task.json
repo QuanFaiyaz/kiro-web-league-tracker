@@ -1,0 +1,7 @@
+{
+  "task_id": "task-improve-ui-match-ordering",
+  "task_description": "Improve the UI of the LoL Match History Tracker app by adding clear match ordering indicators (match numbers, timestamps, most recent labels) and polishing the overall visual design",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

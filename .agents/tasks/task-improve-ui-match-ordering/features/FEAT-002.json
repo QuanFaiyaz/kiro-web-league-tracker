@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add timestamp data to match history and improve the overall UI design with clear match ordering indicators, polished visuals, and improved layout",
+  "status": "pending",
+  "steps": [
+    "Step 1 - Add gameStartTimestamp to types and API: In lib/types.ts, add a 'gameStartTimestamp' field (number) to RiotMatchInfo interface and a 'gameStartTimestamp' field (number) to MatchSummary interface. In app/api/riot/route.ts, extract match.info.gameStartTimestamp (fallback to match.info.gameCreation or Date.now()) and include it in the MatchSummary object returned. Also add 'gameStartTimestamp' to the ApiSuccessResponse type if needed.",
+    "Step 2 - Create a time-ago utility: Create lib/time-ago.ts with a function formatTimeAgo(timestamp: number): string that returns relative time strings like '2 minutes ago', '1 hour ago', '3 days ago'. Handle edge cases (future timestamps, very old timestamps).",
+    "Step 3 - Update MatchHistory component: In app/components/MatchHistory.tsx, pass a 'matchIndex' prop (0-based index from the map) and a 'totalMatches' count to each MatchCard. Add a subheading below 'Recent Matches' that says 'Ordered from most recent to oldest' to clarify the ordering.",
+    "Step 4 - Update MatchCard component: In app/components/MatchCard.tsx, accept 'matchIndex' (number) and 'totalMatches' (number) as props. Display a match number badge (e.g. '#1' for most recent) in the top-left or left side of the card. Show a relative timestamp (using formatTimeAgo) from match.gameStartTimestamp. For the first match (index 0), show a 'Most Recent' badge/label. Ensure the layout remains responsive and accessible.",
+    "Step 5 - Polish overall UI design: Improve the visual hierarchy across components. In app/page.tsx, enhance the header with a subtle gradient or icon. In app/components/SearchForm.tsx, add subtle visual improvements (better spacing, focus states). In app/components/RegionSelector.tsx, improve the selector styling. Ensure all components have consistent spacing, refined borders, and polished hover/focus states. Make the MatchCard more visually distinct with better use of color, spacing, and typography. Add subtle transitions/animations where appropriate.",
+    "Step 6 - Update MatchDetailModal: Add the game timestamp display in the modal header showing when the match was played (formatted as relative time).",
+    "Step 7 - Run npm run lint and npm run build to verify everything passes cleanly with zero errors. Fix any TypeScript or lint errors that arise."
+  ],
+  "acceptance_criteria": [
+    "MatchSummary type includes gameStartTimestamp field",
+    "API route extracts and returns gameStartTimestamp from Riot API response",
+    "Each MatchCard displays a match number indicator (e.g. #1 for most recent)",
+    "The first/most recent match has a visible 'Most Recent' label",
+    "Each MatchCard shows a relative time-ago label (e.g. '2 hours ago')",
+    "The MatchHistory section heading clearly indicates ordering (most recent first)",
+    "Overall UI has improved visual polish (better spacing, typography, hover states)",
+    "All components remain fully responsive on mobile/tablet/desktop",
+    "Semantic HTML and ARIA labels are used properly",
+    "npm run lint passes with zero errors",
+    "npm run build passes with zero errors"
+  ],
+  "verification": [
+    "npm run lint exits with code 0",
+    "npm run build exits with code 0"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
