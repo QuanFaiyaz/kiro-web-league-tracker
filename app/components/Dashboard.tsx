@@ -8,6 +8,7 @@ import ErrorDisplay from "./ErrorDisplay";
 import SkeletonLoader from "./SkeletonLoader";
 import RankBadge from "./RankBadge";
 import MatchFilters, { type MatchFilterValues, type GameModeFilter, type DateRangeFilter } from "./MatchFilters";
+import AnalyticsSection from "./AnalyticsSection";
 import { useToast } from "./ToastProvider";
 import { MatchSummary, RiotAccount, ApiSuccessResponse, ApiErrorResponse, Region, RankedEntry } from "@/lib/types";
 
@@ -220,6 +221,10 @@ export default function Dashboard() {
               </p>
             )}
           </section>
+        )}
+
+        {account && !isLoading && !error && matches.length > 0 && (
+          <AnalyticsSection matches={matches} />
         )}
 
         {account && !isLoading && !error && matches.length > 0 && (
