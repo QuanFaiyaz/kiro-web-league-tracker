@@ -1,17 +1,13 @@
 import Image from "next/image";
 import { MatchSummary } from "@/lib/types";
+import { formatDuration } from "@/lib/format-duration";
 
 interface MatchCardProps {
   match: MatchSummary;
+  onClick?: () => void;
 }
 
-function formatDuration(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
-}
-
-export default function MatchCard({ match }: MatchCardProps) {
+export default function MatchCard({ match, onClick }: MatchCardProps) {
   const borderColor = match.win
     ? "border-green-500/40"
     : "border-red-500/40";
@@ -23,9 +19,21 @@ export default function MatchCard({ match }: MatchCardProps) {
     : "text-red-400";
   const resultLabel = match.win ? "Victory" : "Defeat";
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <article
-      className={`flex items-center gap-4 rounded-lg border ${borderColor} ${resultBg} p-4 transition-colors hover:bg-gray-800/50`}
+      className={`flex items-center gap-4 rounded-lg border ${borderColor} ${resultBg} p-4 transition-colors hover:bg-gray-800/50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/60`}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`${match.champion} - ${resultLabel} - ${match.kills}/${match.deaths}/${match.assists} KDA - ${match.queueType}`}
     >
       <div className="shrink-0">
         <Image
@@ -58,7 +66,7 @@ export default function MatchCard({ match }: MatchCardProps) {
             <span className="text-gray-300 text-xs">
               {formatDuration(match.gameDuration)}
             </span>
-            <span className="text-xs text-gray-500">{match.gameMode}</span>
+            <span className="text-xs text-gray-500">{match.queueType}</span>
           </div>
         </div>
       </div>
