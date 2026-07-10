@@ -51,18 +51,18 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
           onChange={(e) => setRiotId(e.target.value)}
           placeholder="GameName#Tag"
           disabled={isLoading}
-          className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-3 text-sm text-gray-100 placeholder-gray-500 shadow-sm transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:shadow-indigo-500/10 disabled:opacity-50"
+          className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 shadow-sm transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:shadow-indigo-500/10"
         />
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-indigo-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-indigo-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] dark:focus:ring-offset-gray-900"
         >
           {isLoading ? "Searching..." : "Search"}
         </button>
       </div>
       {validationError && (
-        <p className="mt-2 text-sm text-red-400" role="alert">
+        <p className="mt-2 text-sm text-red-500 dark:text-red-400" role="alert">
           {validationError}
         </p>
       )}

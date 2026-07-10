@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Address review findings: fix theme hydration flash with blocking script, add error state to Load More button, prevent re-animation on appended cards, fix sticky header overlapping content, and add clarifying comment for region-to-platform mapping.",
+  "status": "completed",
+  "steps": [
+    "1. Fix theme hydration flash in app/layout.tsx by adding a blocking inline script that reads localStorage and sets the dark class before first paint.",
+    "2. Add transient error state to Load More in app/components/Dashboard.tsx so users see feedback when a fetch fails.",
+    "3. Track batch start index in app/components/MatchHistory.tsx and only apply fadeSlideUp animation to newly appended cards.",
+    "4. Fix sticky header content overlap in app/components/Dashboard.tsx by adding scroll-padding-top or top padding.",
+    "5. Add clarifying comment to REGION_TO_PLATFORM in lib/types.ts explaining the best-effort default mapping limitation."
+  ],
+  "acceptance_criteria": [
+    "No theme flash for light-mode users on page load - blocking script sets class before paint",
+    "Load More button shows error feedback when fetch fails and allows retry",
+    "Only newly appended match cards animate; existing cards do not re-animate on Load More",
+    "Sticky header does not overlap the first match card content",
+    "REGION_TO_PLATFORM has a comment explaining the limitation",
+    "npm run lint passes with zero errors",
+    "npm run build passes with zero errors"
+  ],
+  "verification": [
+    "cd /projects/sandbox/kiro-web-league-tracker && eval \"$(mise activate bash)\" && npm run lint",
+    "cd /projects/sandbox/kiro-web-league-tracker && eval \"$(mise activate bash)\" && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All 5 review issues addressed. React 19 ESLint rule (react-hooks/refs) prevents reading refs during render, so animation tracking uses useState instead of useRef for the animateFromIndex value. The blocking script approach for theme hydration works without needing next-themes since it runs before React hydrates. Build and lint pass with zero errors."
+}

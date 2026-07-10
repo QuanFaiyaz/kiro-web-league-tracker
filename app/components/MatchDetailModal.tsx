@@ -21,10 +21,10 @@ function parseKdaValue(kda: string): number {
 }
 
 function getKdaRating(kda: number): { label: string; color: string } {
-  if (kda >= 4) return { label: "Excellent", color: "text-green-400" };
-  if (kda >= 2) return { label: "Good", color: "text-blue-400" };
-  if (kda >= 1) return { label: "Average", color: "text-yellow-400" };
-  return { label: "Needs Improvement", color: "text-red-400" };
+  if (kda >= 4) return { label: "Excellent", color: "text-green-600 dark:text-green-400" };
+  if (kda >= 2) return { label: "Good", color: "text-blue-600 dark:text-blue-400" };
+  if (kda >= 1) return { label: "Average", color: "text-yellow-600 dark:text-yellow-400" };
+  return { label: "Needs Improvement", color: "text-red-600 dark:text-red-400" };
 }
 
 function generatePerformanceFeedback(match: MatchSummary): string[] {
@@ -32,7 +32,6 @@ function generatePerformanceFeedback(match: MatchSummary): string[] {
   const kdaValue = parseKdaValue(match.kda);
   const kdaRating = getKdaRating(kdaValue);
 
-  // KDA analysis
   feedback.push(
     `Your KDA of ${match.kda} (${match.kills}/${match.deaths}/${match.assists}) is rated as ${kdaRating.label.toLowerCase()}. ${
       kdaValue >= 4
@@ -45,7 +44,6 @@ function generatePerformanceFeedback(match: MatchSummary): string[] {
     }`
   );
 
-  // Deaths analysis
   if (match.deaths <= 2) {
     feedback.push(
       "Very low death count indicates excellent positioning and map awareness. Keep playing safe and punishing enemy mistakes."
@@ -64,7 +62,6 @@ function generatePerformanceFeedback(match: MatchSummary): string[] {
     );
   }
 
-  // Game duration analysis
   const minutes = match.gameDuration / 60;
   if (minutes < 20) {
     feedback.push(
@@ -147,7 +144,6 @@ export default function MatchDetailModal({
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
-    // Lock body scroll when modal is open
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     modalRef.current?.focus();
@@ -166,16 +162,15 @@ export default function MatchDetailModal({
   };
 
   const borderColor = match.win
-    ? "border-green-500/40"
-    : "border-red-500/40";
-  const resultText = match.win ? "text-green-400" : "text-red-400";
+    ? "border-green-400/40 dark:border-green-500/40"
+    : "border-red-400/40 dark:border-red-500/40";
+  const resultText = match.win ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400";
   const resultLabel = match.win ? "Victory" : "Defeat";
   const kdaValue = parseKdaValue(match.kda);
   const kdaRating = getKdaRating(kdaValue);
   const performanceFeedback = generatePerformanceFeedback(match);
   const mentalTips = generateMentalTips(match);
 
-  // Build item slots array: always show 7 slots (6 items + trinket/item6)
   const TOTAL_SLOTS = 7;
   const itemSlots = Array.from({ length: TOTAL_SLOTS }, (_, index) => {
     return match.items[index] || null;
@@ -192,12 +187,12 @@ export default function MatchDetailModal({
         aria-modal="true"
         aria-labelledby="modal-title"
         tabIndex={-1}
-        className={`relative mx-4 w-full max-w-lg overflow-y-auto rounded-xl border ${borderColor} bg-gray-900 shadow-2xl outline-none max-h-[90vh]`}
+        className={`relative mx-4 w-full max-w-lg overflow-y-auto rounded-xl border ${borderColor} bg-white shadow-2xl outline-none max-h-[90vh] dark:bg-gray-900`}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-3 top-3 rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
+          className="absolute right-3 top-3 rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200"
           aria-label="Close modal"
         >
           <svg
@@ -217,7 +212,7 @@ export default function MatchDetailModal({
         </button>
 
         {/* Header Section */}
-        <header className="flex items-center gap-4 border-b border-gray-700/50 p-5">
+        <header className="flex items-center gap-4 border-b border-gray-200 p-5 dark:border-gray-700/50">
           <div className="shrink-0">
             <Image
               src={match.championIcon}
@@ -230,7 +225,7 @@ export default function MatchDetailModal({
           <div className="flex flex-col gap-1">
             <h2
               id="modal-title"
-              className="text-lg font-bold text-gray-100"
+              className="text-lg font-bold text-gray-900 dark:text-gray-100"
             >
               {match.champion}
             </h2>
@@ -238,37 +233,41 @@ export default function MatchDetailModal({
               <span className={`text-sm font-semibold ${resultText}`}>
                 {resultLabel}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {match.queueType}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
                 {formatDuration(match.gameDuration)}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
                 &middot; {formatTimeAgo(match.gameStartTimestamp)}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-100">
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 {match.kills}/{match.deaths}/{match.assists}
               </span>
               <span className={`text-xs font-medium ${kdaRating.color}`}>
                 {match.kda} KDA - {kdaRating.label}
               </span>
             </div>
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+              <span>{match.csPerMinute} CS/min</span>
+              <span>{match.visionScore} vision score</span>
+            </div>
           </div>
         </header>
 
         {/* Item Build Section */}
-        <section className="border-b border-gray-700/50 p-5" aria-label="Item build">
-          <h3 className="mb-3 text-sm font-semibold text-gray-300 uppercase tracking-wide">
+        <section className="border-b border-gray-200 p-5 dark:border-gray-700/50" aria-label="Item build">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
             Item Build
           </h3>
           <div className="grid grid-cols-7 gap-2">
             {itemSlots.map((item, index) => (
               <div
                 key={index}
-                className="relative aspect-square w-full overflow-hidden rounded-md border border-gray-700 bg-gray-800"
+                className="relative aspect-square w-full overflow-hidden rounded-md border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800"
               >
                 {item ? (
                   <Image
@@ -280,7 +279,7 @@ export default function MatchDetailModal({
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">
-                    <div className="h-3 w-3 rounded-sm bg-gray-700" />
+                    <div className="h-3 w-3 rounded-sm bg-gray-300 dark:bg-gray-700" />
                   </div>
                 )}
               </div>
@@ -289,17 +288,17 @@ export default function MatchDetailModal({
         </section>
 
         {/* AI Performance Feedback Section */}
-        <section className="border-b border-gray-700/50 p-5" aria-label="AI performance feedback">
-          <h3 className="mb-3 text-sm font-semibold text-indigo-400 uppercase tracking-wide">
+        <section className="border-b border-gray-200 p-5 dark:border-gray-700/50" aria-label="AI performance feedback">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
             AI Performance Feedback
           </h3>
           <ul className="flex flex-col gap-3">
             {performanceFeedback.map((feedback, index) => (
               <li
                 key={index}
-                className="text-sm leading-relaxed text-gray-300"
+                className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
               >
-                <span className="mr-2 inline-block text-indigo-400">&#9679;</span>
+                <span className="mr-2 inline-block text-indigo-500 dark:text-indigo-400">&#9679;</span>
                 {feedback}
               </li>
             ))}
@@ -308,16 +307,16 @@ export default function MatchDetailModal({
 
         {/* Mental & Improvement Tips Section */}
         <section className="p-5" aria-label="Mental and improvement tips">
-          <h3 className="mb-3 text-sm font-semibold text-purple-400 uppercase tracking-wide">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-purple-600 dark:text-purple-400">
             Mental &amp; Improvement Tips
           </h3>
           <ul className="flex flex-col gap-3">
             {mentalTips.map((tip, index) => (
               <li
                 key={index}
-                className="text-sm leading-relaxed text-gray-300"
+                className="text-sm leading-relaxed text-gray-700 dark:text-gray-300"
               >
-                <span className="mr-2 inline-block text-purple-400">&#9679;</span>
+                <span className="mr-2 inline-block text-purple-500 dark:text-purple-400">&#9679;</span>
                 {tip}
               </li>
             ))}
