@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Build the frontend dashboard UI: a search input for Riot ID lookup, match history display with match cards showing champion icon, KDA, win/loss, and game duration. Use responsive Tailwind CSS and semantic HTML throughout.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Replace app/page.tsx with the main dashboard page. Structure using semantic HTML: <header> for app title/branding, <main> for the search and results area, <footer> for attribution. Use a dark-themed design fitting the LoL aesthetic.",
     "Create app/components/SearchForm.tsx - a client component ('use client') with a controlled input field that accepts 'GameName#Tag' format. Include: (a) An input with placeholder text showing the expected format, (b) A submit button, (c) Client-side validation that splits on '#' and validates both parts exist, (d) Loading state indicator while fetching, (e) Error message display area. Use responsive Tailwind classes (full width on mobile, constrained on larger screens).",
