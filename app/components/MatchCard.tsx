@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { MatchSummary } from "@/lib/types";
 import { formatDuration } from "@/lib/format-duration";
@@ -8,7 +6,6 @@ import { formatTimeAgo } from "@/lib/time-ago";
 interface MatchCardProps {
   match: MatchSummary;
   matchIndex: number;
-  totalMatches: number;
   onClick?: () => void;
 }
 
@@ -34,7 +31,7 @@ export default function MatchCard({ match, matchIndex, onClick }: MatchCardProps
 
   return (
     <article
-      className={`relative flex items-center gap-4 rounded-lg border ${borderColor} ${resultBg} p-4 transition-all duration-200 hover:bg-gray-800/60 hover:shadow-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/60`}
+      className={`relative overflow-visible flex items-center gap-4 rounded-lg border ${borderColor} ${resultBg} p-4 transition-all duration-200 hover:bg-gray-800/60 hover:shadow-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/60`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role="button"

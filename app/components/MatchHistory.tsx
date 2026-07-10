@@ -44,7 +44,6 @@ export default function MatchHistory({ matches }: MatchHistoryProps) {
             key={match.matchId}
             match={match}
             matchIndex={index}
-            totalMatches={matches.length}
             onClick={() => handleMatchClick(match)}
           />
         ))}
