@@ -6,12 +6,15 @@ import {
   getLatestDdragonVersion,
   RiotApiError,
 } from "@/lib/riot-api";
-import type { MatchSummary, ApiSuccessResponse, ApiErrorResponse } from "@/lib/types";
+import type { MatchSummary, ApiSuccessResponse, ApiErrorResponse, Region } from "@/lib/types";
+import { REGION_BASE_URLS } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+const VALID_REGIONS = Object.keys(REGION_BASE_URLS) as Region[];
+
 /**
- * GET /api/riot?gameName=...&tagLine=...
+ * GET /api/riot?gameName=...&tagLine=...&region=...
  *
  * Proxies Riot Games API calls for account lookup and match history retrieval.
  * Keeps the API key secure on the server side.
@@ -20,6 +23,12 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const gameName = searchParams.get("gameName");
   const tagLine = searchParams.get("tagLine");
+  const regionParam = searchParams.get("region");
+
+  // Validate and default the region parameter
+  const region: Region = VALID_REGIONS.includes(regionParam as Region)
+    ? (regionParam as Region)
+    : "americas";
 
   // Validate required parameters
   if (!gameName || !tagLine) {
@@ -51,12 +60,12 @@ export async function GET(request: NextRequest) {
     // Step 1: Look up the account by Riot ID
     const account = await getAccountByRiotId(gameName, tagLine);
 
-    // Step 2: Get recent match IDs
-    const matchIds = await getMatchIdsByPuuid(account.puuid, 10);
+    // Step 2: Get recent match IDs using the selected region
+    const matchIds = await getMatchIdsByPuuid(account.puuid, 10, region);
 
     // Step 3: Fetch details for each match using Promise.allSettled for partial-failure resilience
     const matchResults = await Promise.allSettled(
-      matchIds.map((matchId) => getMatchDetails(matchId))
+      matchIds.map((matchId) => getMatchDetails(matchId, region))
     );
 
     // Step 4: Get latest Data Dragon version for champion icon URLs
@@ -116,12 +125,10 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // If account was found but no match IDs were returned, warn that regional
-    // routing may be the cause (match history endpoint only returns results for
-    // the configured region, currently Americas).
+    // If account was found but no match IDs were returned, inform the user.
     if (matchIds.length === 0) {
       responseBody.warning =
-        "No match history found. If this player is on a non-Americas server (EU, Asia, etc.), their matches may not be available due to regional routing limitations.";
+        "No match history found for this player in the selected region. Try selecting a different region.";
     }
 
     return Response.json(responseBody);

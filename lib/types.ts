@@ -2,6 +2,29 @@
  * TypeScript interfaces for Riot Games API data.
  */
 
+// --- Region types ---
+
+export type Region = "americas" | "europe" | "asia" | "sea";
+
+export interface RegionOption {
+  value: Region;
+  label: string;
+}
+
+export const REGION_OPTIONS: RegionOption[] = [
+  { value: "americas", label: "Americas" },
+  { value: "europe", label: "Europe" },
+  { value: "asia", label: "Asia" },
+  { value: "sea", label: "South East Asia" },
+];
+
+export const REGION_BASE_URLS: Record<Region, string> = {
+  americas: "https://americas.api.riotgames.com",
+  europe: "https://europe.api.riotgames.com",
+  asia: "https://asia.api.riotgames.com",
+  sea: "https://sea.api.riotgames.com",
+};
+
 // --- Application-level types ---
 
 export interface RiotAccount {
