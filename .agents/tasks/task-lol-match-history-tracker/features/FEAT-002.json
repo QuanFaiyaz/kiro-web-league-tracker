@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Implement server-side API Route Handlers to proxy Riot Games API calls (account lookup by Riot ID and match history retrieval), keeping the API key secure on the server side. Also implement the Riot API utility/service layer.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create app/api/riot/route.ts with a GET handler that accepts query params 'gameName' and 'tagLine'. This handler will: (1) Validate the inputs, (2) Call Riot account-v1 API to get PUUID: GET https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}, (3) Call match-v5 API to get match IDs: GET https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?count=10, (4) For each match ID, call GET https://americas.api.riotgames.com/lol/match/v5/matches/{matchId} to get match details, (5) Parse and return formatted match data. Use process.env.RIOT_API_KEY for the API key header (X-Riot-Token). Reference the Next.js 16 Route Handler pattern in node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/route.md.",
     "Create a lib/riot-api.ts utility module that encapsulates the Riot API calls: (a) getAccountByRiotId(gameName: string, tagLine: string) - returns PUUID, (b) getMatchIdsByPuuid(puuid: string, count?: number) - returns array of match ID strings, (c) getMatchDetails(matchId: string) - returns match detail object. Each function should use fetch with the X-Riot-Token header and handle HTTP errors (404 for not found, 429 for rate limited, etc.).",
