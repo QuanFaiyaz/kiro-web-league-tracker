@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { MatchSummary } from "@/lib/types";
 import { formatDuration } from "@/lib/format-duration";
+import { formatTimeAgo } from "@/lib/time-ago";
 
 interface MatchDetailModalProps {
   match: MatchSummary;
@@ -242,6 +243,9 @@ export default function MatchDetailModal({
               </span>
               <span className="text-xs text-gray-500">
                 {formatDuration(match.gameDuration)}
+              </span>
+              <span className="text-xs text-gray-500">
+                &middot; {formatTimeAgo(match.gameStartTimestamp)}
               </span>
             </div>
             <div className="flex items-center gap-2">

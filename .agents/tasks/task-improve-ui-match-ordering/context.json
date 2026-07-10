@@ -1,0 +1,31 @@
+{
+  "project_type": "Next.js 16 app with React 19, Tailwind CSS 4, TypeScript",
+  "language": "TypeScript/React",
+  "build_system": "npm with Next.js build pipeline. AGENTS.md warns about Next.js breaking changes and instructs reading node_modules/next/dist/docs/ before writing code.",
+  "test_framework": "No test framework configured - no test command or test files found",
+  "build_command": "npm run build",
+  "test_command": "npm run lint",
+  "verification_instructions": "1. Run npm install to install dependencies. 2. Run npm run lint to check ESLint. 3. Run npm run build to verify successful production build.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd /projects/sandbox/kiro-web-league-tracker && npm install",
+  "environment_constraints": "No test suite exists. Verification is lint + build. The RIOT_API_KEY env var is not set in sandbox but build should succeed without it since it's only used at runtime.",
+  "contribution_requirements": "Follow AGENTS.md - read node_modules/next/dist/docs/ for Next.js 16 specifics. Use responsive Tailwind CSS, semantic HTML, accessibility best practices.",
+  "key_patterns": "Components are in app/components/, library code in lib/. Dark theme (gray-950 background, gray-100/200/300 text). Indigo accent color. Match cards use border colors for win/loss indication (green/red). MatchSummary type flows from API route through Dashboard state to MatchHistory and MatchCard. The API route at app/api/riot/route.ts constructs MatchSummary objects from Riot API responses.",
+  "relevant_files": [
+    "lib/types.ts",
+    "app/api/riot/route.ts",
+    "app/components/MatchCard.tsx",
+    "app/components/MatchHistory.tsx",
+    "app/components/Dashboard.tsx",
+    "app/components/MatchDetailModal.tsx",
+    "app/components/SearchForm.tsx",
+    "app/components/RegionSelector.tsx",
+    "app/components/ErrorDisplay.tsx",
+    "app/components/LoadingSpinner.tsx",
+    "app/page.tsx",
+    "app/layout.tsx",
+    "app/globals.css",
+    "lib/format-duration.ts"
+  ],
+  "directory_structure": "app/ - Next.js app router pages and components. app/api/riot/ - server-side API route. app/components/ - client components. lib/ - shared utilities and types. public/ - static assets."
+}

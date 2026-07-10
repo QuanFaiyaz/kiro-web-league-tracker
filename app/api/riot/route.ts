@@ -138,6 +138,7 @@ export async function GET(request: NextRequest) {
           queueId,
           queueType,
           items,
+          gameStartTimestamp: match.info.gameStartTimestamp || match.info.gameCreation || Date.now(),
         };
       });
 

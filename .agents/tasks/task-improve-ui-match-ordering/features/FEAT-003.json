@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-003",
+  "type": "refactor",
+  "description": "Address semantic review findings: remove dead totalMatches prop, remove redundant 'use client' directive from MatchCard, and add overflow-visible to card container",
+  "status": "completed",
+  "steps": [
+    "Step 1 - Remove totalMatches from MatchCardProps interface in app/components/MatchCard.tsx and from the destructuring",
+    "Step 2 - Remove the 'use client' directive from app/components/MatchCard.tsx since it is already within a client boundary",
+    "Step 3 - Remove totalMatches={matches.length} prop from MatchCard usage in app/components/MatchHistory.tsx",
+    "Step 4 - Add overflow-visible class to the MatchCard article container to be explicit about badge visibility",
+    "Step 5 - Run npm run lint and npm run build to verify everything passes"
+  ],
+  "acceptance_criteria": [
+    "totalMatches prop no longer exists in MatchCardProps interface",
+    "totalMatches is not passed from MatchHistory to MatchCard",
+    "MatchCard.tsx does not have a 'use client' directive",
+    "MatchCard article element includes overflow-visible class",
+    "npm run lint passes with zero errors",
+    "npm run build passes with zero errors"
+  ],
+  "verification": [
+    "npm run lint exits with code 0",
+    "npm run build exits with code 0"
+  ],
+  "blocked_reason": null,
+  "findings": "All three review issues addressed. Removed dead totalMatches prop from interface and call site, removed redundant 'use client' directive, added overflow-visible to card container. Lint and build pass cleanly."
+}
