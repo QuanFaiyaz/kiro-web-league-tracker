@@ -24,7 +24,11 @@ export default function MatchCard({ match, matchIndex, onClick }: MatchCardProps
     }
   };
 
-  const splashArtUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${match.champion}_0.jpg`;
+  // Extract the champion key from the icon URL (which is correctly formed server-side)
+  // Pattern: https://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{ChampionKey}.png
+  const championKeyMatch = match.championIcon.match(/\/img\/champion\/([^/.]+)\.png/);
+  const championKey = championKeyMatch ? championKeyMatch[1] : match.champion;
+  const splashArtUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championKey}_0.jpg`;
 
   return (
     <article

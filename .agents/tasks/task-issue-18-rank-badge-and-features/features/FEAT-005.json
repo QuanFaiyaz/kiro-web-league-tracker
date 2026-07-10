@@ -1,0 +1,19 @@
+{
+  "id": "FEAT-005",
+  "title": "Address code review feedback - toast cap, filter callbacks, aria-live, analytics label, splash URL",
+  "status": "in_progress",
+  "steps": [
+    "Add max 5 concurrent toasts to ToastProvider.tsx, evicting oldest when exceeded",
+    "Remove useCallback wrappers in MatchFilters.tsx since they provide no benefit with unstable deps",
+    "Add aria-live='polite' to filter results count paragraph in MatchFilters.tsx",
+    "Update AnalyticsSection.tsx heading to clarify it shows all matches",
+    "Extract champion key from championIcon URL for splash art in MatchCard.tsx"
+  ],
+  "acceptance_criteria": [
+    "ToastProvider caps toasts at 5, evicting oldest",
+    "MatchFilters handlers are simple inline functions without useCallback",
+    "Filter results count has aria-live='polite'",
+    "Analytics section heading indicates it covers all matches",
+    "Splash art URL is derived from championIcon URL, not match.champion"
+  ]
+}

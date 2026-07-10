@@ -25,9 +25,17 @@ interface ToastProviderProps {
 export default function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
+  const MAX_TOASTS = 5;
+
   const addToast = useCallback((message: string, type: ToastType) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => {
+      const updated = [...prev, { id, message, type }];
+      if (updated.length > MAX_TOASTS) {
+        return updated.slice(updated.length - MAX_TOASTS);
+      }
+      return updated;
+    });
   }, []);
 
   const removeToast = useCallback((id: string) => {

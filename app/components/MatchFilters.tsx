@@ -1,7 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
-
 export type GameModeFilter = "all" | "ranked_solo" | "ranked_flex" | "normal" | "aram";
 export type DateRangeFilter = "all" | "24h" | "7d" | "30d";
 
@@ -39,26 +37,17 @@ export default function MatchFilters({
   totalMatches,
   filteredCount,
 }: MatchFiltersProps) {
-  const handleChampionChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange({ ...filters, champion: e.target.value });
-    },
-    [filters, onChange]
-  );
+  const handleChampionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...filters, champion: e.target.value });
+  };
 
-  const handleGameModeChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange({ ...filters, gameMode: e.target.value as GameModeFilter });
-    },
-    [filters, onChange]
-  );
+  const handleGameModeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange({ ...filters, gameMode: e.target.value as GameModeFilter });
+  };
 
-  const handleDateRangeChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange({ ...filters, dateRange: e.target.value as DateRangeFilter });
-    },
-    [filters, onChange]
-  );
+  const handleDateRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange({ ...filters, dateRange: e.target.value as DateRangeFilter });
+  };
 
   const isFiltered = filters.champion || filters.gameMode !== "all" || filters.dateRange !== "all";
 
@@ -130,7 +119,7 @@ export default function MatchFilters({
 
       {/* Filter results count */}
       {isFiltered && (
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p aria-live="polite" className="text-xs text-gray-500 dark:text-gray-400">
           Showing {filteredCount} of {totalMatches} matches
         </p>
       )}

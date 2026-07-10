@@ -16,9 +16,14 @@ export default function AnalyticsSection({ matches }: AnalyticsSectionProps) {
 
   return (
     <section aria-label="Performance Analytics" className="mt-6 flex flex-col gap-6">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-        Performance Analytics
-      </h2>
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          Performance Analytics
+        </h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Based on all loaded matches
+        </p>
+      </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="md:col-span-2 lg:col-span-1">
           <ChampionStats matches={matches} />
