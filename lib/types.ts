@@ -52,6 +52,7 @@ export interface MatchSummary {
   queueId: number;
   queueType: string;
   items: MatchItem[];
+  gameStartTimestamp: number;
 }
 
 // --- Riot API response shapes ---
@@ -84,6 +85,8 @@ export interface RiotMatchInfo {
   gameDuration: number;
   gameMode: string;
   queueId: number;
+  gameStartTimestamp: number;
+  gameCreation: number;
   participants: RiotMatchParticipant[];
 }
 

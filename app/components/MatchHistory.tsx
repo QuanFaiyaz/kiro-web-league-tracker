@@ -30,14 +30,21 @@ export default function MatchHistory({ matches }: MatchHistoryProps) {
 
   return (
     <section aria-label="Match history">
-      <h2 className="mb-4 text-lg font-semibold text-gray-200">
-        Recent Matches ({matches.length})
-      </h2>
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-200">
+          Recent Matches ({matches.length})
+        </h2>
+        <p className="mt-1 text-xs text-gray-400">
+          Ordered from most recent to oldest
+        </p>
+      </div>
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        {matches.map((match) => (
+        {matches.map((match, index) => (
           <MatchCard
             key={match.matchId}
             match={match}
+            matchIndex={index}
+            totalMatches={matches.length}
             onClick={() => handleMatchClick(match)}
           />
         ))}

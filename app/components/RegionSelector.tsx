@@ -35,7 +35,7 @@ export default function RegionSelector({ selectedRegion, onChange, disabled }: R
           }
         }}
         disabled={disabled}
-        className="rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-sm text-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+        className="rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-sm text-gray-100 shadow-sm transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:opacity-50 hover:border-gray-500"
       >
         {REGION_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add timestamp data to match history and improve the overall UI design with clear match ordering indicators, polished visuals, and improved layout",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Step 1 - Add gameStartTimestamp to types and API: In lib/types.ts, add a 'gameStartTimestamp' field (number) to RiotMatchInfo interface and a 'gameStartTimestamp' field (number) to MatchSummary interface. In app/api/riot/route.ts, extract match.info.gameStartTimestamp (fallback to match.info.gameCreation or Date.now()) and include it in the MatchSummary object returned. Also add 'gameStartTimestamp' to the ApiSuccessResponse type if needed.",
     "Step 2 - Create a time-ago utility: Create lib/time-ago.ts with a function formatTimeAgo(timestamp: number): string that returns relative time strings like '2 minutes ago', '1 hour ago', '3 days ago'. Handle edge cases (future timestamps, very old timestamps).",

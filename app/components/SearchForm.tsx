@@ -51,12 +51,12 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
           onChange={(e) => setRiotId(e.target.value)}
           placeholder="GameName#Tag"
           disabled={isLoading}
-          className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-3 text-sm text-gray-100 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
+          className="flex-1 rounded-lg border border-gray-600 bg-gray-800 px-4 py-3 text-sm text-gray-100 placeholder-gray-500 shadow-sm transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:shadow-indigo-500/10 disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-indigo-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {isLoading ? "Searching..." : "Search"}
         </button>
