@@ -177,9 +177,13 @@ export async function GET(request: NextRequest) {
         if (rankedEntries.length > 0) {
           responseBody.rankedData = rankedEntries;
         }
-      } catch {
-        // Ranked lookup failure is non-fatal - user might not be ranked
-        // or API key might lack ranked permissions
+      } catch (rankedErr) {
+        // Ranked lookup failure is non-fatal - surface it so the UI can inform the user
+        const detail =
+          rankedErr instanceof RiotApiError
+            ? `Ranked data unavailable (${rankedErr.status})`
+            : "Ranked data unavailable";
+        responseBody.rankedError = detail;
       }
     }
 

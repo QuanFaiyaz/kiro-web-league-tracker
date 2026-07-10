@@ -149,6 +149,31 @@ export interface RiotSummonerResponse {
   summonerLevel: number;
 }
 
+// --- Analytics types ---
+
+export interface ChampionStatsSummary {
+  champion: string;
+  championIcon: string;
+  gamesPlayed: number;
+  wins: number;
+  winRate: number;
+  avgKda: number;
+  avgCsPerMinute: number;
+}
+
+export interface GameModeDistribution {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
+export interface PerformanceTrendPoint {
+  index: number;
+  label: string;
+  kda: number;
+  rollingWinRate: number;
+}
+
 // --- API error response ---
 
 export interface ApiErrorResponse {
@@ -161,4 +186,5 @@ export interface ApiSuccessResponse {
   account: RiotAccount;
   warning?: string;
   rankedData?: RankedEntry[];
+  rankedError?: string;
 }

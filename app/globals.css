@@ -35,3 +35,26 @@ body {
     transform: translateY(0);
   }
 }
+
+@keyframes shimmer {
+  0% {
+    box-shadow: 0 0 4px 1px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 10px 3px currentColor;
+  }
+  100% {
+    box-shadow: 0 0 4px 1px currentColor;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

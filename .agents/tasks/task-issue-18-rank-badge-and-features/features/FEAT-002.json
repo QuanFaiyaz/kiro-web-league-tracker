@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add skeleton loading states, toast notification system, and match filters (champion, role, game mode, date range)",
+  "status": "completed",
+  "steps": [
+    "Create app/components/SkeletonMatchCard.tsx: A skeleton placeholder component shaped like MatchCard.tsx. Use pulse animation with Tailwind animate-pulse. Include a champion icon circle placeholder, text line placeholders for name/result/KDA, and item slot placeholders. Make the skeleton visually match the MatchCard layout.",
+    "Create app/components/SkeletonLoader.tsx: Renders 5-6 SkeletonMatchCard components to replace the LoadingSpinner during initial search loading. Include a subtle skeleton for the summoner info section (name + rank badge area) too.",
+    "Update app/components/Dashboard.tsx: Replace <LoadingSpinner /> usage with <SkeletonLoader /> for the initial search loading state. Keep the LoadingSpinner for the 'load more' button state.",
+    "Create app/components/Toast.tsx: A toast notification component with support for success, error, and info variants. Position fixed bottom-right. Auto-dismiss after 4 seconds with a slide-in/fade-out animation. Include a close button. Support multiple toasts stacked.",
+    "Create app/components/ToastProvider.tsx: A context provider and hook (useToast) that manages toast state. Expose addToast(message, type) and removeToast(id) functions. Wrap the app in this provider from app/layout.tsx or the ThemeProvider.",
+    "Update app/components/Dashboard.tsx: Use the toast system to show error notifications instead of (or in addition to) the inline ErrorDisplay for transient errors. Show a success toast briefly when search completes. Show error toast when load-more fails.",
+    "Create app/components/MatchFilters.tsx: A filter bar component with: (1) Champion text input/dropdown to filter by champion name, (2) Role selector (Top, Jungle, Mid, ADC, Support, All), (3) Game mode filter (All, Ranked, Normal, ARAM) using queueType values, (4) Date range filter (Last 24h, Last 7 days, Last 30 days, All time). Use the existing match data's gameStartTimestamp for date filtering and queueType/champion fields for other filters.",
+    "Update app/components/Dashboard.tsx: Add MatchFilters above MatchHistory. Apply filters client-side to the matches array before passing to MatchHistory. Filtering state should be managed in Dashboard. Show a count of filtered results like 'Showing X of Y matches'.",
+    "Verify the build passes with 'bunx next build' and lint passes with 'bunx eslint .'"
+  ],
+  "acceptance_criteria": [
+    "Skeleton loaders appear during initial search instead of a spinner, shaped like match cards",
+    "Toast notifications appear bottom-right for errors and successful actions, auto-dismiss after 4 seconds",
+    "Match filters allow filtering by champion name (text search), role, game mode, and date range",
+    "Filters apply client-side and update the displayed match list reactively",
+    "All new components use responsive Tailwind CSS and work in both light and dark mode",
+    "Build succeeds with zero errors",
+    "Lint passes with zero errors"
+  ],
+  "verification": [
+    "Run 'bunx eslint .' and confirm zero errors",
+    "Run 'bunx next build' and confirm successful build with no TypeScript or compilation errors"
+  ],
+  "blocked_reason": null,
+  "findings": "Build and lint pass. Used bun runtime which shows worker_threads NotImplementedError warnings but these are not compilation errors. The LoadingSpinner component is still in the codebase but no longer imported from Dashboard.tsx (skeleton replaced it for initial loading). Toast slide-in animation uses @keyframes slideInRight defined in globals.css. ToastProvider wraps inside ThemeProvider in layout.tsx."
+}

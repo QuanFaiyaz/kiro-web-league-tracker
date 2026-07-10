@@ -24,9 +24,15 @@ export default function MatchCard({ match, matchIndex, onClick }: MatchCardProps
     }
   };
 
+  // Extract the champion key from the icon URL (which is correctly formed server-side)
+  // Pattern: https://ddragon.leagueoflegends.com/cdn/{version}/img/champion/{ChampionKey}.png
+  const championKeyMatch = match.championIcon.match(/\/img\/champion\/([^/.]+)\.png/);
+  const championKey = championKeyMatch ? championKeyMatch[1] : match.champion;
+  const splashArtUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championKey}_0.jpg`;
+
   return (
     <article
-      className={`group relative overflow-visible border-l-4 ${accentColor} rounded-lg bg-gray-50 p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg dark:bg-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/60`}
+      className={`group relative overflow-visible border-l-4 ${accentColor} rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/60`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role="button"
@@ -35,79 +41,101 @@ export default function MatchCard({ match, matchIndex, onClick }: MatchCardProps
     >
       {/* Most Recent badge */}
       {isMostRecent && (
-        <span className="absolute -top-2 right-2 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
+        <span className="absolute -top-2 right-2 rounded-full bg-indigo-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm z-10">
           Most Recent
         </span>
       )}
 
-      <div className="flex items-center gap-4">
-        <div className="shrink-0">
-          <Image
-            src={match.championIcon}
-            alt={`${match.champion} icon`}
-            width={48}
-            height={48}
-            className="rounded-full ring-2 ring-gray-200 dark:ring-gray-700/50"
-          />
-        </div>
-        <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              {match.champion}
-            </span>
-            <span className={`text-xs font-medium ${resultText}`}>
-              {resultLabel}
-            </span>
-            <span className="text-[11px] text-gray-400 dark:text-gray-500">
-              {formatTimeAgo(match.gameStartTimestamp)}
-            </span>
-          </div>
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex flex-col items-center">
-              <span className="font-medium text-gray-900 dark:text-gray-100">
-                {match.kills}/{match.deaths}/{match.assists}
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {match.kda} KDA
-              </span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray-600 dark:text-gray-300">
-                {match.csPerMinute} CS/min
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {match.visionScore} vision
-              </span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-gray-600 dark:text-gray-300">
-                {formatDuration(match.gameDuration)}
-              </span>
-              <span className="text-xs text-gray-400 dark:text-gray-500">{match.queueType}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Inner container with overflow-hidden to clip splash art within border-radius */}
+      <div className="relative overflow-hidden rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+        {/* Champion splash art background */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.08] dark:opacity-[0.12]"
+          style={{
+            backgroundImage: `url(${splashArtUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center right",
+          }}
+          aria-hidden="true"
+        />
+        {/* Gradient overlay for text readability */}
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-gray-50/90 via-gray-50/70 to-gray-50/40 dark:from-gray-900/90 dark:via-gray-900/70 dark:to-gray-900/40"
+          aria-hidden="true"
+        />
 
-      {/* Items - visible on hover */}
-      {match.items.length > 0 && (
-        <div className="mt-3 hidden items-center gap-1.5 group-hover:flex">
-          {match.items.map((item) => (
-            <div
-              key={item.id}
-              className="relative h-7 w-7 overflow-hidden rounded border border-gray-200 dark:border-gray-700"
-            >
+        {/* Card content */}
+        <div className="relative z-[1]">
+          <div className="flex items-center gap-4">
+            <div className="shrink-0">
               <Image
-                src={item.iconUrl}
-                alt={`Item ${item.id}`}
-                fill
-                sizes="28px"
-                className="object-cover"
+                src={match.championIcon}
+                alt={`${match.champion} icon`}
+                width={48}
+                height={48}
+                className="rounded-full ring-2 ring-gray-200 dark:ring-gray-700/50"
               />
             </div>
-          ))}
+            <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  {match.champion}
+                </span>
+                <span className={`text-xs font-medium ${resultText}`}>
+                  {resultLabel}
+                </span>
+                <span className="text-[11px] text-gray-400 dark:text-gray-500">
+                  {formatTimeAgo(match.gameStartTimestamp)}
+                </span>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex flex-col items-center">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {match.kills}/{match.deaths}/{match.assists}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {match.kda} KDA
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-gray-600 dark:text-gray-300">
+                    {match.csPerMinute} CS/min
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {match.visionScore} vision
+                  </span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-gray-600 dark:text-gray-300">
+                    {formatDuration(match.gameDuration)}
+                  </span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{match.queueType}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Items - visible on hover */}
+          {match.items.length > 0 && (
+            <div className="mt-3 hidden items-center gap-1.5 group-hover:flex">
+              {match.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="relative h-7 w-7 overflow-hidden rounded border border-gray-200 dark:border-gray-700"
+                >
+                  <Image
+                    src={item.iconUrl}
+                    alt={`Item ${item.id}`}
+                    fill
+                    sizes="28px"
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </article>
   );
 }
