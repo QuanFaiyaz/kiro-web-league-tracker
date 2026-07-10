@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add skeleton loading states, toast notification system, and match filters (champion, role, game mode, date range)",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create app/components/SkeletonMatchCard.tsx: A skeleton placeholder component shaped like MatchCard.tsx. Use pulse animation with Tailwind animate-pulse. Include a champion icon circle placeholder, text line placeholders for name/result/KDA, and item slot placeholders. Make the skeleton visually match the MatchCard layout.",
     "Create app/components/SkeletonLoader.tsx: Renders 5-6 SkeletonMatchCard components to replace the LoadingSpinner during initial search loading. Include a subtle skeleton for the summoner info section (name + rank badge area) too.",
@@ -28,5 +28,5 @@
     "Run 'bunx next build' and confirm successful build with no TypeScript or compilation errors"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Build and lint pass. Used bun runtime which shows worker_threads NotImplementedError warnings but these are not compilation errors. The LoadingSpinner component is still in the codebase but no longer imported from Dashboard.tsx (skeleton replaced it for initial loading). Toast slide-in animation uses @keyframes slideInRight defined in globals.css. ToastProvider wraps inside ThemeProvider in layout.tsx."
 }
