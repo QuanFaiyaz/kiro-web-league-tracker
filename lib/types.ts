@@ -53,6 +53,10 @@ export interface MatchSummary {
   queueType: string;
   items: MatchItem[];
   gameStartTimestamp: number;
+  totalMinionsKilled: number;
+  neutralMinionsKilled: number;
+  visionScore: number;
+  csPerMinute: number;
 }
 
 // --- Riot API response shapes ---
@@ -79,6 +83,9 @@ export interface RiotMatchParticipant {
   item4: number;
   item5: number;
   item6: number;
+  totalMinionsKilled: number;
+  neutralMinionsKilled: number;
+  visionScore: number;
 }
 
 export interface RiotMatchInfo {

@@ -124,6 +124,14 @@ export async function GET(request: NextRequest) {
         const queueId = match.info.queueId ?? 0;
         const queueType = getQueueTypeLabel(queueId, match.info.gameMode);
 
+        const totalMinionsKilled = participant?.totalMinionsKilled ?? 0;
+        const neutralMinionsKilled = participant?.neutralMinionsKilled ?? 0;
+        const visionScore = participant?.visionScore ?? 0;
+        const gameDurationMinutes = match.info.gameDuration / 60;
+        const csPerMinute = gameDurationMinutes > 0
+          ? parseFloat(((totalMinionsKilled + neutralMinionsKilled) / gameDurationMinutes).toFixed(1))
+          : 0;
+
         return {
           matchId: match.metadata.matchId,
           champion: championName,
@@ -139,6 +147,10 @@ export async function GET(request: NextRequest) {
           queueType,
           items,
           gameStartTimestamp: match.info.gameStartTimestamp || match.info.gameCreation || Date.now(),
+          totalMinionsKilled,
+          neutralMinionsKilled,
+          visionScore,
+          csPerMinute,
         };
       });
 

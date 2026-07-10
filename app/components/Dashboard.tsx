@@ -56,29 +56,31 @@ export default function Dashboard() {
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-8">
-      <section aria-label="Summoner search">
-        <SearchForm onSearch={handleSearch} isLoading={isLoading} />
-      </section>
+      <div className="sticky top-0 z-10 -mx-4 flex flex-col gap-4 bg-white/80 px-4 py-4 backdrop-blur-md dark:bg-gray-950/80">
+        <section aria-label="Summoner search">
+          <SearchForm onSearch={handleSearch} isLoading={isLoading} />
+        </section>
 
-      <section aria-label="Region selection">
-        <RegionSelector selectedRegion={region} onChange={setRegion} disabled={isLoading} />
-      </section>
+        <section aria-label="Region selection">
+          <RegionSelector selectedRegion={region} onChange={setRegion} disabled={isLoading} />
+        </section>
+      </div>
 
       {isLoading && <LoadingSpinner />}
 
       {error && <ErrorDisplay message={error.message} status={error.status} />}
 
       {warning && !isLoading && !error && (
-        <aside aria-label="Warning" className="rounded-lg border border-yellow-600/50 bg-yellow-900/20 px-4 py-3 text-sm text-yellow-300">
+        <aside aria-label="Warning" className="rounded-lg border border-yellow-500/50 bg-yellow-50/50 px-4 py-3 text-sm text-yellow-700 dark:border-yellow-600/50 dark:bg-yellow-900/20 dark:text-yellow-300">
           {warning}
         </aside>
       )}
 
       {account && !isLoading && !error && (
         <section aria-label="Summoner info" className="text-center">
-          <p className="text-lg font-medium text-gray-200">
+          <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
             {account.gameName}
-            <span className="text-gray-500">#{account.tagLine}</span>
+            <span className="text-gray-400 dark:text-gray-500">#{account.tagLine}</span>
           </p>
         </section>
       )}
