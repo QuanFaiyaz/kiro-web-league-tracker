@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Add champion splash art backgrounds on match cards",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Update next.config.ts: Add 'cdn.communitydragon.org' to the remotePatterns for next/image since champion splash arts are available from Community Dragon CDN (ddragon does not serve splash arts in a convenient format for backgrounds).",
     "Update app/components/MatchCard.tsx: Add a subtle champion splash art as the card background. Use the champion name to construct the splash art URL from ddragon (https://ddragon.leagueoflegends.com/cdn/img/champion/splash/{ChampionName}_0.jpg). Apply it as a CSS background-image with very low opacity (5-10%) so it does not interfere with text readability. Use a gradient overlay to ensure text contrast. The splash art should only show on hover or always be subtly visible.",
