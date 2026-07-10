@@ -2,6 +2,14 @@
 
 import { Region, REGION_OPTIONS } from "@/lib/types";
 
+const VALID_REGIONS: ReadonlySet<string> = new Set<string>(
+  REGION_OPTIONS.map((opt) => opt.value)
+);
+
+function isRegion(value: string): value is Region {
+  return VALID_REGIONS.has(value);
+}
+
 interface RegionSelectorProps {
   selectedRegion: Region;
   onChange: (region: Region) => void;
@@ -20,7 +28,12 @@ export default function RegionSelector({ selectedRegion, onChange, disabled }: R
       <select
         id="region-select"
         value={selectedRegion}
-        onChange={(e) => onChange(e.target.value as Region)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (isRegion(value)) {
+            onChange(value);
+          }
+        }}
         disabled={disabled}
         className="rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-sm text-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
       >
