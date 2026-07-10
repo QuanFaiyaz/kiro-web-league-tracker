@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [matches, setMatches] = useState<MatchSummary[]>([]);
   const [account, setAccount] = useState<RiotAccount | null>(null);
   const [rankedData, setRankedData] = useState<RankedEntry[]>([]);
+  const [rankedError, setRankedError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState(false);
@@ -29,6 +30,7 @@ export default function Dashboard() {
     setMatches([]);
     setAccount(null);
     setRankedData([]);
+    setRankedError(null);
     setHasMore(true);
     lastSearchRef.current = { gameName, tagLine };
 
@@ -47,6 +49,9 @@ export default function Dashboard() {
       setAccount(data.account);
       if (data.rankedData) {
         setRankedData(data.rankedData);
+      }
+      if (data.rankedError) {
+        setRankedError(data.rankedError);
       }
       if (data.warning) {
         setWarning(data.warning);
@@ -139,6 +144,11 @@ export default function Dashboard() {
                   <RankBadge key={entry.queueType} rankedEntry={entry} />
                 ))}
               </div>
+            )}
+            {rankedError && rankedData.length === 0 && (
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {rankedError}
+              </p>
             )}
           </section>
         )}

@@ -19,8 +19,11 @@ const TIER_COLORS: Record<string, string> = {
   CHALLENGER: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-700",
 };
 
+const HIGH_TIERS = new Set(["DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]);
+
 function formatTierName(tier: string): string {
-  return tier.charAt(0) + tier.slice(1).toLowerCase();
+  if (!tier) return "Unranked";
+  return tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase();
 }
 
 function getQueueLabel(queueType: string): string {
@@ -31,13 +34,32 @@ function getQueueLabel(queueType: string): string {
 
 export default function RankBadge({ rankedEntry }: RankBadgeProps) {
   const { tier, rank, leaguePoints, queueType } = rankedEntry;
-  const colorClasses = TIER_COLORS[tier] ?? TIER_COLORS.IRON;
-  const tierName = formatTierName(tier);
-  const showDivision = !["MASTER", "GRANDMASTER", "CHALLENGER"].includes(tier);
+
+  // Normalize tier to uppercase for consistent lookups
+  const normalizedTier = tier ? tier.toUpperCase() : "";
+
+  // Defensive: if tier is empty/undefined, show a fallback
+  if (!normalizedTier) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400"
+        aria-label={`${getQueueLabel(queueType)}: Unranked`}
+      >
+        <span>{getQueueLabel(queueType)}</span>
+        <span className="opacity-40">|</span>
+        <span>Unranked</span>
+      </span>
+    );
+  }
+
+  const colorClasses = TIER_COLORS[normalizedTier] ?? TIER_COLORS.IRON;
+  const tierName = formatTierName(normalizedTier);
+  const showDivision = !["MASTER", "GRANDMASTER", "CHALLENGER"].includes(normalizedTier);
+  const isHighTier = HIGH_TIERS.has(normalizedTier);
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${colorClasses}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${colorClasses} ${isHighTier ? "animate-[shimmer_2s_ease-in-out_infinite]" : ""}`}
       aria-label={`${getQueueLabel(queueType)}: ${tierName} ${showDivision ? rank : ""} ${leaguePoints} LP`}
     >
       <span>{getQueueLabel(queueType)}</span>

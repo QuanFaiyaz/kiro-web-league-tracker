@@ -161,4 +161,5 @@ export interface ApiSuccessResponse {
   account: RiotAccount;
   warning?: string;
   rankedData?: RankedEntry[];
+  rankedError?: string;
 }
