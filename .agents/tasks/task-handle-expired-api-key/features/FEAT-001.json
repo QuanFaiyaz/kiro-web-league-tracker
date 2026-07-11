@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Expand the API route error handling to catch the missing/unconfigured RIOT_API_KEY case (status 500, message contains 'RIOT_API_KEY is not configured') and route it to the same user-friendly 503 response as 401/403 errors. This ensures users see 'Service temporarily unavailable, please try again later' regardless of whether the key is expired (401/403) or completely missing (500 from riotFetch).",
+  "status": "in_progress",
+  "steps": [
+    "Run npm install to ensure dependencies are available",
+    "Read app/api/riot/route.ts to understand the current error handling block in the catch clause",
+    "In the catch block of the GET handler (around line 142-149), expand the condition that checks for error.status === 401 || error.status === 403 to ALSO match the missing-key scenario. The missing-key error has status 500 and message 'RIOT_API_KEY is not configured'. Add a check: if error.status === 500 and error.message includes 'RIOT_API_KEY' (or similar), return the same 503 response. A clean approach is: if (error.status === 401 || error.status === 403 || (error.status === 500 && error.message.includes('RIOT_API_KEY'))) { return 503 response }",
+    "Run npm run lint to verify no lint errors",
+    "Run npm run build to verify the change compiles successfully"
+  ],
+  "acceptance_criteria": [
+    "When RIOT_API_KEY is not set, the API route returns HTTP 503 with body { error: 'Service temporarily unavailable, please try again later', status: 503 }",
+    "When RIOT_API_KEY is set but expired (401/403 from Riot), the existing behavior is preserved - same 503 response",
+    "npm run lint passes with zero errors",
+    "npm run build passes with zero errors"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

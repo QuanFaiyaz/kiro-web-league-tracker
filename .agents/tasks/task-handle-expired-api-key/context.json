@@ -1,0 +1,21 @@
+{
+  "project_type": "Next.js 16 app with TypeScript, Tailwind CSS, App Router",
+  "language": "TypeScript",
+  "build_system": "npm with Next.js 16 (package-lock.json present, bun.lock also exists but use npm)",
+  "test_framework": "No test framework configured - no test files found",
+  "build_command": "npm run build",
+  "test_command": "npm run lint",
+  "verification_instructions": "1. Run npm install, 2. Run npm run lint, 3. Run npm run build - all must pass with zero errors",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd /projects/sandbox/kiro-web-league-tracker && npm install",
+  "environment_constraints": "OPEN_INTERNET network mode. Node.js v22 via nvm. No RIOT_API_KEY is configured - this is by design for this task since the key is expired/missing.",
+  "contribution_requirements": "AGENTS.md says to check node_modules/next/dist/docs/ for Next.js 16 breaking changes before writing code. Follow the code-quality-steering rules: zero lint errors, zero build errors, no unused imports.",
+  "key_patterns": "API route at app/api/riot/route.ts handles errors by checking RiotApiError instances. Currently catches 401/403 with user-friendly 503 response. Missing-key error throws RiotApiError with status 500 and message 'RIOT_API_KEY is not configured' - this falls through to generic 500 handler instead of the 503 path.",
+  "relevant_files": [
+    "app/api/riot/route.ts",
+    "lib/riot-api.ts",
+    "lib/types.ts",
+    ".env.example"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and API routes. lib/ - shared utilities and types. app/api/riot/route.ts - main API proxy route. lib/riot-api.ts - Riot API client with riotFetch helper."
+}

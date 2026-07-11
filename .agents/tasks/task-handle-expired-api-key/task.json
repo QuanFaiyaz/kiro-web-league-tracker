@@ -1,0 +1,7 @@
+{
+  "task_id": "task-handle-expired-api-key",
+  "task_description": "Fix the API route to return a user-friendly 503 response when RIOT_API_KEY is missing/unconfigured, matching the existing behavior for 401/403 expired key errors. Issue #21 already exists on GitHub. The code fix in route.ts is the only remaining work.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}
