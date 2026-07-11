@@ -1,20 +1,19 @@
 {
-  "project_type": "Next.js 16 app with TypeScript and Tailwind CSS, App Router architecture",
+  "project_type": "Next.js 16 App Router application with React 19",
   "language": "TypeScript",
-  "build_system": "npm with Next.js 16",
-  "test_framework": "No test framework configured",
+  "build_system": "npm with Next.js 16 (Turbopack). Node 22 installed via mise.",
+  "test_framework": "No test framework configured. No project tests exist.",
   "build_command": "npm run build",
-  "test_command": null,
-  "verification_instructions": "Run npm run build to verify the change compiles successfully",
+  "test_command": "No test command available (no tests exist)",
+  "verification_instructions": "1. Run npm run lint to check for linting errors. 2. Run npm run build to verify compilation.",
   "snapshot_or_generated_files": null,
-  "setup_instructions": "npm install",
-  "environment_constraints": "OPEN_INTERNET - full network access available. Riot API key is expired/invalid (returns 401).",
-  "contribution_requirements": "TypeScript must pass, ESLint must pass, build must succeed. No test suite configured.",
-  "key_patterns": "API route in app/api/riot/route.ts uses RiotApiError class from lib/riot-api.ts. Error handling uses switch on status codes in riotFetch. The route returns ApiErrorResponse type objects on errors.",
+  "setup_instructions": "1. Install node via mise (MISE_NODE_VERIFY=0 mise install node@22 && mise use --global node@22). 2. npm install. 3. npm run build to verify baseline.",
+  "environment_constraints": "OPEN_INTERNET network mode. No RIOT_API_KEY configured in environment. bun 1.2.14 available. Node 22.23.1 installed via mise.",
+  "contribution_requirements": "AGENTS.md warns that Next.js 16 has breaking changes - check node_modules/next/dist/docs/ before writing code. Code quality steering requires: zero TypeScript errors, zero lint errors, build must succeed.",
+  "key_patterns": "API route in app/api/riot/route.ts uses RiotApiError from lib/riot-api.ts. Error handling catches RiotApiError and checks status codes. 401/403 returns user-friendly 503. Missing API key throws with status 500 which falls through to generic handler, leaking internal message.",
   "relevant_files": [
     "app/api/riot/route.ts",
-    "lib/riot-api.ts",
-    "lib/types.ts"
+    "lib/riot-api.ts"
   ],
-  "directory_structure": "app/ - Next.js app router pages and API routes; lib/ - shared utilities, types, API helpers; public/ - static assets"
+  "directory_structure": "app/ - Next.js App Router pages and API routes. lib/ - Shared utilities including riot-api.ts and types. public/ - Static assets."
 }
