@@ -198,7 +198,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof RiotApiError) {
       // When the API key is expired or invalid, return a user-friendly message
       // instead of exposing the internal error details
-      if (error.status === 401 || error.status === 403) {
+      if (error.status === 401 || error.status === 403 || (error.status === 500 && error.message.includes("RIOT_API_KEY"))) {
         return Response.json(
           { error: "Service temporarily unavailable, please try again later", status: 503 } satisfies ApiErrorResponse,
           { status: 503 }
