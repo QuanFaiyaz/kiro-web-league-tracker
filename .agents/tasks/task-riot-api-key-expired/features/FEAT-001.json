@@ -1,23 +1,28 @@
 {
   "id": "FEAT-001",
   "type": "fix",
-  "description": "Update the API route error handling for expired/invalid API key (403 status) to return a user-friendly 'Service temporarily unavailable' message instead of exposing the internal error. Also handle 401 status the same way since the Riot API may return either for an expired key.",
+  "description": "Expand the API route's catch block to also return the user-friendly 503 message when RIOT_API_KEY is missing (status 500 with message containing 'RIOT_API_KEY'). Currently, only 401/403 from Riot API are caught, but when the env var is not set at all, the RiotApiError(500, 'RIOT_API_KEY is not configured') falls through to the generic handler and leaks internal details to users. The GitHub Issue #21 already exists with correct content and the 'urgent' label. No new issue creation is needed.",
   "status": "completed",
   "steps": [
-    "In app/api/riot/route.ts, update the catch block that handles RiotApiError. When the error status is 401 or 403, return a response with message 'Service temporarily unavailable, please try again later' and HTTP status 503 instead of the current behavior of returning the raw error message and status.",
-    "Ensure the ApiErrorResponse type is used for the response body, maintaining consistency with the existing pattern.",
-    "Run npm run lint to ensure no lint errors.",
-    "Run npm run build to verify the change compiles successfully."
+    "Run npm install in /projects/sandbox/kiro-web-league-tracker to set up dependencies",
+    "In app/api/riot/route.ts, expand the if condition at line 201 from `if (error.status === 401 || error.status === 403)` to also catch the missing-key scenario: `if (error.status === 401 || error.status === 403 || (error.status === 500 && error.message.includes('RIOT_API_KEY')))`",
+    "Run npm run lint to verify zero lint errors",
+    "Run npm run build to verify zero build errors",
+    "Create a new git branch named 'fix/api-key-expired-handling' (do NOT reuse any existing branch)",
+    "Commit the change with message 'fix: return user-friendly 503 when RIOT_API_KEY is missing'",
+    "Do NOT push or create a PR - the orchestrator handles that"
   ],
   "acceptance_criteria": [
-    "When the API route encounters a 401 or 403 error from Riot API, it returns HTTP 503 with body {error: 'Service temporarily unavailable, please try again later', status: 503}",
+    "The condition in app/api/riot/route.ts catches 401, 403, and 500-with-RIOT_API_KEY-message errors",
+    "All three cases return HTTP 503 with body { error: 'Service temporarily unavailable, please try again later', status: 503 }",
+    "npm run lint passes with zero errors",
     "npm run build passes with zero errors",
-    "npm run lint passes with zero errors"
+    "Changes are committed on a new branch 'fix/api-key-expired-handling'"
   ],
   "verification": [
     "npm run lint",
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": "Node.js was not pre-installed; used mise to install node@22. npm run lint and npm run build both pass. mise.toml was created in project root but not committed as part of the feature commit to keep it focused."
+  "findings": "Implementation completed successfully. Review feedback addressed: (1) Added 'code' property to RiotApiError class with options-object constructor pattern, using error.code === 'MISSING_API_KEY' instead of fragile string matching on error.message. (2) Reverted unrelated package-lock.json changes (recharts). bun run lint and bun run build both pass with zero errors. Commit amended on branch fix/api-key-expired-handling-v2 at commit 9ac2bcf."
 }
