@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Ensure the API route returns the user-friendly 'Service temporarily unavailable' message for ALL key-related failures, including the missing-key scenario (status 500 from riotFetch when RIOT_API_KEY env var is not set). Currently, the catch block in app/api/riot/route.ts only maps status 401 and 403 to the 503 response, but when RIOT_API_KEY is missing, riotFetch throws RiotApiError with status 500 and message 'RIOT_API_KEY is not configured', which falls through to return that internal message to the client. The fix should also catch this case and return the same 503 'Service temporarily unavailable, please try again later' response.",
+  "status": "completed",
+  "steps": [
+    "Read app/api/riot/route.ts to understand the current error handling in the catch block",
+    "Modify the catch block condition for the user-friendly 503 response: change `if (error.status === 401 || error.status === 403)` to also cover the missing-key scenario. The best approach is to add a check for `error.status === 500 && error.message === 'RIOT_API_KEY is not configured'` OR alternatively check for status 401, 403, OR 500 with a message indicating key issues. Another clean approach: add a separate early check before the existing 401/403 check, like `if (error.status === 500 && error.message.includes('RIOT_API_KEY'))` that returns the same 503 response.",
+    "Run npm run build to verify the change compiles successfully",
+    "Run npm run lint to verify no lint errors"
+  ],
+  "acceptance_criteria": [
+    "When RIOT_API_KEY is not set, the /api/riot endpoint returns HTTP 503 with body {error: 'Service temporarily unavailable, please try again later', status: 503}",
+    "When RIOT_API_KEY is set but expired (401/403 from Riot), the endpoint still returns HTTP 503 with the same user-friendly message",
+    "npm run build passes with zero errors",
+    "npm run lint passes with zero errors"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm it succeeds",
+    "Run `npm run lint` and confirm zero errors"
+  ],
+  "blocked_reason": null,
+  "findings": "node_modules not pre-installed; ran npm install first. nvm required to access node/npm (nvm use 22). Build and lint both pass cleanly. The fix adds a condition for status 500 with message containing 'RIOT_API_KEY' to the existing 401/403 guard."
+}
