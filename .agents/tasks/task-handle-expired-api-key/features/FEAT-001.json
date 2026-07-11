@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Expand the API route error handling to catch the missing/unconfigured RIOT_API_KEY case (status 500, message contains 'RIOT_API_KEY is not configured') and route it to the same user-friendly 503 response as 401/403 errors. This ensures users see 'Service temporarily unavailable, please try again later' regardless of whether the key is expired (401/403) or completely missing (500 from riotFetch).",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Run npm install to ensure dependencies are available",
     "Read app/api/riot/route.ts to understand the current error handling block in the catch clause",
@@ -21,5 +21,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Change was straightforward. npm must be invoked via 'source ~/.nvm/nvm.sh' before use. Build and lint both pass cleanly. No test framework present so verification was lint + build only."
 }
