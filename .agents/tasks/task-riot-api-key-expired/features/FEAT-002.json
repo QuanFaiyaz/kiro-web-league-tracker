@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "chore",
   "description": "Create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent' containing manual steps for the developer to regenerate and update the API key. Then create a PR with the code changes from FEAT-001 and enable auto-merge if the build passes.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create a GitHub issue titled 'Alert: Riot API key expired' with label 'urgent'. The issue body should contain the exact markdown content specified in the task requirements with the manual steps.",
     "Create a new git branch (e.g., fix/api-key-expired-handling), commit the changes from FEAT-001, and push to remote.",
@@ -18,5 +18,5 @@
     "npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Issue #21 already existed with the correct title, label, and body so no duplicate was created. PR #56 was created at https://github.com/QuanFaiyaz/kiro-web-league-tracker/pull/56. Build and lint pass. The fix adds error.message.includes('RIOT_API_KEY') to the catch condition so that missing key errors also return the user-friendly 503 response."
 }
