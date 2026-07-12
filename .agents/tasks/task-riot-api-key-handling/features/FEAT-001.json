@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Expand the error handling in app/api/riot/route.ts to cover the missing RIOT_API_KEY case. Currently, when RIOT_API_KEY is not configured, lib/riot-api.ts throws RiotApiError('RIOT_API_KEY is not configured', 500). The catch block only handles status 401 and 403 with the user-friendly 503 response. The fix must also catch the missing-key case (status 500 with 'RIOT_API_KEY' in the error message) and return the same 503 'Service temporarily unavailable, please try again later' response.",
+  "status": "completed",
+  "steps": [
+    "Read app/api/riot/route.ts to understand the current error handling in the catch block",
+    "Modify the catch block for RiotApiError: expand the condition from `if (error.status === 401 || error.status === 403)` to also match when the error message contains 'RIOT_API_KEY' (indicating the key is missing/not configured). This way, status 500 errors about the missing key are also caught.",
+    "The expanded condition should be: `if (error.status === 401 || error.status === 403 || error.message.includes('RIOT_API_KEY'))` returning the same 503 user-friendly response.",
+    "Run 'bun run build' to confirm the build passes.",
+    "Run 'bun run lint' to confirm no lint errors."
+  ],
+  "acceptance_criteria": [
+    "The catch block in app/api/riot/route.ts handles the missing-key case (RiotApiError with status 500 and message containing 'RIOT_API_KEY') by returning the 503 user-friendly response",
+    "'bun run build' succeeds with zero errors",
+    "'bun run lint' passes"
+  ],
+  "verification": [
+    "bun run build",
+    "bun run lint"
+  ],
+  "blocked_reason": null,
+  "findings": "Build and lint pass cleanly. The worker_threads warnings from Bun are cosmetic and do not affect the build."
+}

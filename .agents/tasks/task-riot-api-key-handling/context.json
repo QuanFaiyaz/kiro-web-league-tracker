@@ -1,0 +1,20 @@
+{
+  "project_type": "Next.js 16.2.4 app with TypeScript, Tailwind CSS, React 19",
+  "language": "TypeScript",
+  "build_system": "bun (npm scripts, but bun is the available runtime - npm is not installed)",
+  "test_framework": "No test framework configured",
+  "build_command": "bun run build",
+  "test_command": "bun run lint",
+  "verification_instructions": "Run 'bun run build' to confirm compilation succeeds. Run 'bun run lint' to confirm no lint errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "Run 'bun install' to install dependencies.",
+  "environment_constraints": "npm is not available - use bun. RIOT_API_KEY environment variable is NOT set. OPEN_INTERNET network mode.",
+  "contribution_requirements": "TypeScript must compile. ESLint must pass. Build must succeed with zero errors.",
+  "key_patterns": "API route in app/api/riot/route.ts catches RiotApiError and maps statuses. lib/riot-api.ts throws RiotApiError with status codes. 401/403 currently mapped to 503 user-friendly message. Missing key throws status 500 with message 'RIOT_API_KEY is not configured'.",
+  "relevant_files": [
+    "app/api/riot/route.ts",
+    "lib/riot-api.ts",
+    "lib/types.ts"
+  ],
+  "directory_structure": "app/ - Next.js App Router pages and API routes. lib/ - shared utilities and API client. public/ - static assets."
+}
