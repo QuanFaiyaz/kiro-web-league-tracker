@@ -61,6 +61,13 @@ export async function getLatestDdragonVersion(): Promise<string> {
 }
 
 /**
+ * Error message used when RIOT_API_KEY is missing from the environment.
+ * Shared between the throw site and the catch site to prevent silent breakage
+ * if the message text is changed at one location but not the other.
+ */
+export const MISSING_API_KEY_MESSAGE = "RIOT_API_KEY is not configured";
+
+/**
  * Custom error class for Riot API errors with HTTP status codes.
  */
 export class RiotApiError extends Error {
@@ -86,7 +93,7 @@ async function riotFetch(url: string): Promise<Response> {
   const apiKey = process.env.RIOT_API_KEY;
 
   if (!apiKey) {
-    throw new RiotApiError("RIOT_API_KEY is not configured", 500);
+    throw new RiotApiError(MISSING_API_KEY_MESSAGE, 500);
   }
 
   const response = await fetch(url, {
