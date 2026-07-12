@@ -1,23 +1,24 @@
 {
   "id": "FEAT-001",
   "type": "fix",
-  "description": "Update the API route error handling for expired/invalid API key (403 status) to return a user-friendly 'Service temporarily unavailable' message instead of exposing the internal error. Also handle 401 status the same way since the Riot API may return either for an expired key.",
+  "description": "Handle missing RIOT_API_KEY (status 500) with user-friendly message. Currently when RIOT_API_KEY is not set, riotFetch() throws RiotApiError('RIOT_API_KEY is not configured', 500). This falls through to the generic RiotApiError handler in route.ts and returns the internal error message to users. The fix expands the catch condition to also return the 503 'Service temporarily unavailable' response when the key is missing.",
   "status": "completed",
   "steps": [
-    "In app/api/riot/route.ts, update the catch block that handles RiotApiError. When the error status is 401 or 403, return a response with message 'Service temporarily unavailable, please try again later' and HTTP status 503 instead of the current behavior of returning the raw error message and status.",
-    "Ensure the ApiErrorResponse type is used for the response body, maintaining consistency with the existing pattern.",
-    "Run npm run lint to ensure no lint errors.",
-    "Run npm run build to verify the change compiles successfully."
+    "In app/api/riot/route.ts, modify the catch block's condition from `if (error.status === 401 || error.status === 403)` to also cover the case where RIOT_API_KEY is not configured. The riotFetch() function throws RiotApiError('RIOT_API_KEY is not configured', 500) - so also match when error.message contains 'RIOT_API_KEY is not configured' or check for status 500 with that specific message. The goal is to return the same user-friendly 503 'Service temporarily unavailable, please try again later' response.",
+    "Create a unique branch named 'fix/handle-missing-api-key-503-v2' (use v2 suffix to avoid conflicts with existing PRs). Commit the change with message 'fix: return 503 for missing RIOT_API_KEY instead of leaking internal error'.",
+    "Run npm run build to verify the change compiles successfully.",
+    "Run npm run lint to verify no lint errors."
   ],
   "acceptance_criteria": [
-    "When the API route encounters a 401 or 403 error from Riot API, it returns HTTP 503 with body {error: 'Service temporarily unavailable, please try again later', status: 503}",
+    "When RIOT_API_KEY is not set, the API route returns status 503 with body {error: 'Service temporarily unavailable, please try again later', status: 503}",
+    "When RIOT_API_KEY is expired (401/403 from Riot), the existing behavior is preserved (same 503 response)",
     "npm run build passes with zero errors",
     "npm run lint passes with zero errors"
   ],
   "verification": [
-    "npm run lint",
-    "npm run build"
+    "Run `npm run build` in the project root and confirm it succeeds",
+    "Run `npm run lint` and confirm no errors"
   ],
   "blocked_reason": null,
-  "findings": "Node.js was not pre-installed; used mise to install node@22. npm run lint and npm run build both pass. mise.toml was created in project root but not committed as part of the feature commit to keep it focused."
+  "findings": "Build and lint both pass cleanly. Node.js v20.20.2 found at /opt/toolchains/.nvm/versions/node/v20.20.2/bin. npm install required before build (node_modules were not pre-installed). Next.js 16.2.4 build with Turbopack completed successfully."
 }
