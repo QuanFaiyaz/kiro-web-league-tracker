@@ -86,7 +86,7 @@ async function riotFetch(url: string): Promise<Response> {
   const apiKey = process.env.RIOT_API_KEY;
 
   if (!apiKey) {
-    throw new RiotApiError("RIOT_API_KEY is not configured", 500);
+    throw new RiotApiError("RIOT_API_KEY is not configured", 403);
   }
 
   const response = await fetch(url, {
