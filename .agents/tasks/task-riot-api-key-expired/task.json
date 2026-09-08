@@ -1,7 +1,7 @@
 {
   "task_id": "task-riot-api-key-expired",
-  "task_description": "Riot API key is expired (returns 401). Create a GitHub issue alerting the developer, update the API route to show a user-friendly 'Service temporarily unavailable' message, and create a PR with the fix.",
+  "task_description": "Fix the API route to return a user-friendly 503 response when RIOT_API_KEY is missing (not just when the Riot API returns 401/403). The GitHub issue #21 already exists. A PR needs to be created with this fix.",
   "status": "in_progress",
-  "feature_order": ["FEAT-001", "FEAT-002"],
+  "feature_order": ["FEAT-001"],
   "blocked_reason": null
 }
