@@ -65,13 +65,15 @@ export async function getLatestDdragonVersion(): Promise<string> {
  */
 export class RiotApiError extends Error {
   status: number;
+  code?: string;
   retryAfter?: string;
 
-  constructor(message: string, status: number, retryAfter?: string) {
+  constructor(message: string, status: number, options?: { code?: string; retryAfter?: string }) {
     super(message);
     this.name = "RiotApiError";
     this.status = status;
-    this.retryAfter = retryAfter;
+    this.code = options?.code;
+    this.retryAfter = options?.retryAfter;
   }
 }
 
@@ -86,7 +88,7 @@ async function riotFetch(url: string): Promise<Response> {
   const apiKey = process.env.RIOT_API_KEY;
 
   if (!apiKey) {
-    throw new RiotApiError("RIOT_API_KEY is not configured", 500);
+    throw new RiotApiError("RIOT_API_KEY is not configured", 500, { code: "MISSING_API_KEY" });
   }
 
   const response = await fetch(url, {
@@ -103,7 +105,7 @@ async function riotFetch(url: string): Promise<Response> {
       case 404:
         throw new RiotApiError("Resource not found", 404);
       case 429:
-        throw new RiotApiError("Rate limit exceeded", 429, retryAfter);
+        throw new RiotApiError("Rate limit exceeded", 429, { retryAfter });
       case 403:
         throw new RiotApiError("API key is invalid or expired", 403);
       default:
